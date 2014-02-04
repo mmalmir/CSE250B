@@ -6,8 +6,8 @@ from PosTagFeats import PosTagFeats
 #### loading data ####
 ######################
 
-#l = PuncData()
-#X_train,y_train,X_test,y_test = l.load()
+l = PuncData()
+X_train,y_train,X_test,y_test = l.load()
 
 ######################
 #### feat extrac. ####
@@ -17,10 +17,11 @@ from PosTagFeats import PosTagFeats
 #pickle.dump((l,X_train,y_train,X_test,y_test),f)
 #f.close()
 
-f = open("puncdata.pickle","rb")
-l,X_train,y_train,X_test,y_test = pickle.load(f)
-f.close()
+#f = open("puncdata.pickle","rb")
+#l,X_train,y_train,X_test,y_test = pickle.load(f)
+#f.close()
 
+print l.idxToPos
 
 ptf = PosTagFeats(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos)
 ptf.transform(X_train,y_train)
