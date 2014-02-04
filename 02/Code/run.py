@@ -23,9 +23,11 @@ X_train,y_train,X_test,y_test = l.load()
 
 print l.idxToPos
 
-ptf = PosTagFeats(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos)
-ptf.transform(X_train,y_train)
-
+ptf = PosTagFeats(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,x_ngram_len=1,y_ngram_len=2)
+X_train=ptf.transform(X_train,y_train)
+X_test=ptf.transform(X_test,y_test)
+print X_train.shape,y_train.shape
+print X_test.shape,y_test.shape
 
 
 

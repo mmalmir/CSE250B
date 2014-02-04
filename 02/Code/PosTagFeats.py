@@ -40,7 +40,7 @@ class PosTagFeats(Transformer):
         self.set_params(**kwargs)
         numLabels      = len(self.idxToLabel.keys())+2
         numLabelsSq    = numLabels**2
-        numPos         = len(self.idxToPos)+2
+        numPos         = len(self.idxToPos.keys())+2
         n,d            = X.shape
         print n,d
         XCopy          = copy.deepcopy(X)+1
@@ -49,10 +49,25 @@ class PosTagFeats(Transformer):
         startX         = XCopy.max()+1
         startY         = YCopy.max()+1
         X_transformed  = np.zeros([n,d]).astype(np.int)
-        for i in range(d-1):
-            X_transformed[:,i+1] = XCopy[:,i]*numPos*numLabelsSq + XCopy[:,i+1]*numLabelsSq + YCopy[:,i]*numLabels + YCopy[:,i+1]
-        X_transformed[:,0] = startX*numPos*numLabelsSq + XCopy[:,1]*numLabelsSq + startY*numLabels + YCopy[:,1]
-
+        # X:2-grams and Y:2-grams
+        if self.xNgramLen==2 and self.yNgramLen==2:
+            for i in range(d-1):
+                X_transformed[:,i+1] = XCopy[:,i]*numPos*numLabelsSq + XCopy[:,i+1]*numLabelsSq + YCopy[:,i]*numLabels + YCopy[:,i+1]
+            X_transformed[:,0] = startX*numPos*numLabelsSq + XCopy[:,1]*numLabelsSq + startY*numLabels + YCopy[:,1]
+        # X:1-grams and Y:2-grams
+        elif self.xNgramLen==1 and self.yNgramLen==2:
+            for i in range(d-1):
+                X_transformed[:,i+1] = XCopy[:,i+1]*numLabelsSq + YCopy[:,i]*numLabels + YCopy[:,i+1]
+            X_transformed[:,0] = XCopy[:,0]*numLabelsSq + startY*numLabels + YCopy[:,1]
+        # X:2-grams and Y:1-grams
+        elif self.xNgramLen==2 and self.yNgramLen==1:
+            for i in range(d-1):
+                X_transformed[:,i+1] = XCopy[:,i]*numPos*numLabels + XCopy[:,i+1]*numLabels + YCopy[:,i+1]
+            X_transformed[:,0] = startX*numPos*numLabels + XCopy[:,1]*numLabels + YCopy[:,1]
+        # X:1-grams and Y:1-grams
+        elif self.xNgramLen==2 and self.yNgramLen==1:
+            for i in range(d):
+                X_transformed[:,i] = XCopy[:,i]*numPos + YCopy[:,i]
         return X_transformed
 
 
