@@ -1,6 +1,4 @@
-import nltk
 import re
-import nltk
 import os
 import string
 import numpy as np
@@ -46,7 +44,19 @@ class PuncData:
         #gather all pos tags
         self.posTags,self.posToIdx,self.idxToPos       = self.labelToIdx(self.trainPos,self.testPos)
         self.yLabels,self.yLabelToIdx,self.idxToYlabel = self.labelToIdx(self.trainLabels,self.testLabels)
-        print self.yLabels,self.yLabelToIdx,self.idxToYlabel
+        #convert labels to indices
+        for k in self.trainPos.keys():
+            for i in self.trainPos[k].keys():
+                X_train[k,i] = self.posToIdx[self.trainPos[k][i]]
+            for i in self.trainLabels[k].keys():
+                Y_train[k,i] = self.yLabelToIdx[self.trainLabels[k][i]]
+                
+        for k in self.testPos.keys():
+            for i in self.testPos[k].keys():
+                X_test[k,i]  = self.posToIdx[self.testPos[k][i]]
+            for i in self.testLabels[k].keys():
+                Y_test[k,i]  = self.yLabelToIdx[self.testLabels[k][i]]
+        return (X_train,Y_train,X_test,Y_test)
 
 
 
