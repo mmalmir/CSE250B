@@ -1,11 +1,34 @@
+import pickle
 from PuncData import PuncData
+from PosTagFeats import PosTagFeats
 
 ######################
 #### loading data ####
 ######################
 
-l = PuncData()
-X_train,y_train,X_test,y_test = l.load()
+#l = PuncData()
+#X_train,y_train,X_test,y_test = l.load()
+
+######################
+#### feat extrac. ####
+######################
+
+#f = open("puncdata.pickle","wb")
+#pickle.dump((l,X_train,y_train,X_test,y_test),f)
+#f.close()
+
+f = open("puncdata.pickle","rb")
+l,X_train,y_train,X_test,y_test = pickle.load(f)
+f.close()
+
+
+ptf = PosTagFeats(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos)
+ptf.transform(X_train,y_train)
+
+
+
+
+
 
 ##### testing numeric features
 """
