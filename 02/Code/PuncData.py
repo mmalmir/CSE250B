@@ -56,7 +56,7 @@ class PuncData:
         l1Tags     = set([t for t in chain(*l1Tags)])
         l2Tags     = [x.values() for x in l2.values()]
         l2Tags     = set([t for t in chain(*l2Tags)])
-        u          = l1Tags.union(l2tags)
+        u          = l1Tags.union(l2Tags)
         #convert pos tags to numeric indices
         lblToIdx    = dict()
         idxTolbl    = dict()
