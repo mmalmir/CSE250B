@@ -28,6 +28,17 @@ class CRFClassifier(Transformer):
                 self.idxToPos = kwargs[k]
 
 
+    #for two given samples x,xhat and given weight vector W,
+    #finds the indices of feature functinos Fj that are non zero in either x,xhat,
+    #and returns the indices of those non zero Fs and their values
+    def nonZeroFeatFuncs(self,x,W):
+        bin     = np.bincount(x)
+        idx     = np.where(bincount>0)[0]
+        F       = dict()
+        Fh      = binh[]
+        return indices,F,Fh
+
+
     #############################################
     #train the model using Collin's perceptron
     # wj <- wj + landa x [ Fj(x,y) - Fj(x,yhat) ]
@@ -47,14 +58,14 @@ class CRFClassifier(Transformer):
         landa = 1.
         while not converged:
             #pick next sample
-            x = X[sampeleCntr,:]
-            y = Y[sampleCntr,:]
-            sampelCntr += 1
+            x           = X[sampeleCntr,:]
+            y           = Y[sampleCntr,:]
+            sampelCntr  += 1
             #calculate yhat
-            yhat,xhat = self.mostProbableY(x,W)
+            yhat,xhat   = self.mostProbableY(x,W)
             #calculate Fj(x,y) and Fj(x,yhat)
-            Fidx,Fhat,F = self.featFunc(xhat,W),self.featFunc(x,W)
+            Fidx,F,Fhat = self.whatFeatFuncs(x,xhat,W)
             #update w
-            W[Fidx] = W[Fidx] + landa * (F - Fhat)
+            W[Fidx]     = W[Fidx] + landa * (F - Fhat)
             #check for convergence
             
