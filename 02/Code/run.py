@@ -1,6 +1,7 @@
 import pickle
 from PuncData import PuncData
 from PosTagFeats import PosTagFeats
+from CRFClassifier import CRFClassifier
 
 ######################
 #### loading data ####
@@ -21,13 +22,19 @@ X_train,y_train,X_test,y_test = l.load()
 #l,X_train,y_train,X_test,y_test = pickle.load(f)
 #f.close()
 
-print l.idxToPos
+#print l.idxToPos
 
-ptf = PosTagFeats(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,x_ngram_len=1,y_ngram_len=2)
+x_ngram_len = 2
+y_ngram_len = 2
+
+ptf = PosTagFeats(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len)
 X_train=ptf.transform(X_train,y_train)
 X_test=ptf.transform(X_test,y_test)
-print X_train.shape,y_train.shape
-print X_test.shape,y_test.shape
+
+
+clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len)
+clf.CollinPerceptron(X_train,y_train)
+
 
 
 

@@ -42,7 +42,7 @@ class PosTagFeats(Transformer):
         numLabelsSq    = numLabels**2
         numPos         = len(self.idxToPos.keys())+2
         n,d            = X.shape
-        print n,d
+        endIdx         = X==-1
         XCopy          = copy.deepcopy(X)+1
         YCopy          = copy.deepcopy(y)+1
         XCopy,YCopy    = XCopy.astype(np.int),YCopy.astype(np.int)
@@ -54,20 +54,25 @@ class PosTagFeats(Transformer):
             for i in range(d-1):
                 X_transformed[:,i+1] = XCopy[:,i]*numPos*numLabelsSq + XCopy[:,i+1]*numLabelsSq + YCopy[:,i]*numLabels + YCopy[:,i+1]
             X_transformed[:,0] = startX*numPos*numLabelsSq + XCopy[:,1]*numLabelsSq + startY*numLabels + YCopy[:,1]
+        
         # X:1-grams and Y:2-grams
         elif self.xNgramLen==1 and self.yNgramLen==2:
             for i in range(d-1):
                 X_transformed[:,i+1] = XCopy[:,i+1]*numLabelsSq + YCopy[:,i]*numLabels + YCopy[:,i+1]
             X_transformed[:,0] = XCopy[:,0]*numLabelsSq + startY*numLabels + YCopy[:,1]
+        
         # X:2-grams and Y:1-grams
         elif self.xNgramLen==2 and self.yNgramLen==1:
             for i in range(d-1):
                 X_transformed[:,i+1] = XCopy[:,i]*numPos*numLabels + XCopy[:,i+1]*numLabels + YCopy[:,i+1]
             X_transformed[:,0] = startX*numPos*numLabels + XCopy[:,1]*numLabels + YCopy[:,1]
+        
         # X:1-grams and Y:1-grams
         elif self.xNgramLen==2 and self.yNgramLen==1:
             for i in range(d):
                 X_transformed[:,i] = XCopy[:,i]*numPos + YCopy[:,i]
+
+        X_transformed[endIdx] = -1
         return X_transformed
 
 
