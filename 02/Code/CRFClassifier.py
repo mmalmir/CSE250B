@@ -3,6 +3,7 @@
 ####################################
 
 import copy
+import pprint
 import numpy as np
 import scipy as sp
 from transformer import Transformer
@@ -67,6 +68,7 @@ class CRFClassifier(Transformer):
         #initialize U(y,1) as g_0(START,y)
         idx       = A*numYs*numPos+B*numYs+startY*numLabels+np.arange(numLabels)
         U         = W[idx].reshape([-1,1])
+        print U
         bestY     = np.arange(numLabels).reshape([-1,1])
         temp      = np.arange(numLabels).reshape([1,-1])
         bestYs    = dict()
@@ -80,13 +82,12 @@ class CRFClassifier(Transformer):
             if x[i]<0:
                 x[i]  = 0
                 finished=True
-            
             A         = x[i]/(numPos*numYs)
             B         = (x[i]-A*numPos*numYs)/numYs
             idx       = A*numYs*numPos+B*numYs
             idx       = idx + np.tile(bestY*numLabels,[1,numLabels]) + np.tile(temp,[numLabels,1])
-            U         = np.argmax(W[idx]+np.tile(U,[1,numLabels]),axis=1)
-            bestY     = idx[np.arange(numLabels),U].reshape([-1,1])
+            U         = np.argmax(W[idx]+np.tile(U,[1,numLabels]),axis=0)
+            bestY     = idx[U,np.arange(numLabels)].reshape([-1,1])
             # convert function indices to label indices
             A         = bestY/(numPos*numYs)
             B         = (bestY-A*numPos*numYs)/numYs
@@ -95,13 +96,18 @@ class CRFClassifier(Transformer):
             bestYs[i] = copy.deepcopy(bestY)
             Us[i]     = copy.deepcopy(U)
         x[i] = -1
-        print bestYs
-        print Us
+#        print Us
 
-        #enumerate all Ys for the position i
-        #pick the score for each Y at position i
-        # using U(y,i) = max_y' U(y',i-1)+g_i(y',y)
-
+        Y   = []
+        idx = -1
+        for i in np.sort(-Us.keys()):
+            bestY = bestYs[-i]
+            U     = Us[-i]
+            if idx==-1:
+                idx   = np.argmax(U)
+            else:
+            Y.append(idx)
+    
     
     #############################################
     #sample y* by starting from y, randomly changing
@@ -121,7 +127,9 @@ class CRFClassifier(Transformer):
         numLabels = len(self.idxToLabel.keys())+2
         J = numPos**self.xNgramLen * numLabels**self.yNgramLen
         #initialize w
-        W = 0.0001 * np.random.randn(J)
+#        W = 1. * np.random.randn(J)
+        W = np.zeros(J)
+        W[0] = 10
         n,d = X.shape
         converged = False
         #shuffle input samples
@@ -169,7 +177,7 @@ class CRFClassifier(Transformer):
         numLabels = len(self.idxToLabel.keys())+2
         J = numPos**self.xNgramLen * numLabels**self.yNgramLen
         #initialize w
-        W = 0.0001 * np.random.randn(J)
+        W = 1. * np.random.randn(J)
         n,d = X.shape
         converged = False
         #shuffle input samples
