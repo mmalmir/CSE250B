@@ -2,7 +2,7 @@
 ### CRF classifier main class    ###
 ####################################
 
-
+import copy
 import numpy as np
 import scipy as sp
 from transformer import Transformer
@@ -56,14 +56,60 @@ class CRFClassifier(Transformer):
     # yhat is the most probable label for x given w
     #############################################
     def mostProbableY(self,x,y,W):
+        numLabels     = len(self.idxToLabel.keys())+2
+        numYs         = numLabels ** self.yNgramLen
+        numPos        = len(self.idxToPos.keys())+2
+        numXs         = numPos ** self.xNgramLen
+        startX        = numPos
+        startY        = numLabels
+        A             = x[0]/(numYs*numPos)
+        B             = (x[0]-A*numYs*numPos)/numYs
+        #initialize U(y,1) as g_0(START,y)
+        idx       = A*numYs*numPos+B*numYs+startY*numLabels+np.arange(numLabels)
+        U         = W[idx].reshape([-1,1])
+        bestY     = np.arange(numLabels).reshape([-1,1])
+        temp      = np.arange(numLabels).reshape([1,-1])
+        bestYs    = dict()
+        bestYs[0] = copy.deepcopy(bestY)
+        Us        = dict()
+        Us[0]     = copy.deepcopy(U)
+        i         = 0
+        finished  = False
+        while not finished:
+            i         += 1
+            if x[i]<0:
+                x[i]  = 0
+                finished=True
+            
+            A         = x[i]/(numPos*numYs)
+            B         = (x[i]-A*numPos*numYs)/numYs
+            idx       = A*numYs*numPos+B*numYs
+            idx       = idx + np.tile(bestY*numLabels,[1,numLabels]) + np.tile(temp,[numLabels,1])
+            U         = np.argmax(W[idx]+np.tile(U,[1,numLabels]),axis=1)
+            bestY     = idx[np.arange(numLabels),U].reshape([-1,1])
+            # convert function indices to label indices
+            A         = bestY/(numPos*numYs)
+            B         = (bestY-A*numPos*numYs)/numYs
+            bestY     = (bestY-A*numPos*numYs-B*numYs) / (numLabels)
+            U         = W[U].reshape([-1,1])
+            bestYs[i] = copy.deepcopy(bestY)
+            Us[i]     = copy.deepcopy(U)
+        x[i] = -1
+        print bestYs
+        print Us
+
+        #enumerate all Ys for the position i
+        #pick the score for each Y at position i
+        # using U(y,i) = max_y' U(y',i-1)+g_i(y',y)
 
     
     #############################################
     #sample y* by starting from y, randomly changing
-    # tags and accepting the change if only the new y
+    # tags and accepting the change if  the new y
     # has a higher probability
     #############################################
     def sampleY(self,x,y,W):
+        pass
     
     #############################################
     #train the model using Collin's perceptron
@@ -71,7 +117,9 @@ class CRFClassifier(Transformer):
     # y* is the evil twin
     #############################################
     def contrastiveDivergence(self,X,Y):
-        J = len(self.idxToPos.keys())**self.xNgramLen * (len(self.idxToLabel.keys())**self.yNgramLen)
+        numPos    = len(self.idxToPos.keys())+2
+        numLabels = len(self.idxToLabel.keys())+2
+        J = numPos**self.xNgramLen * numLabels**self.yNgramLen
         #initialize w
         W = 0.0001 * np.random.randn(J)
         n,d = X.shape
@@ -117,7 +165,9 @@ class CRFClassifier(Transformer):
     # wj <- wj + landa x [ Fj(x,y) - Fj(x,yhat) ]
     #############################################
     def CollinPerceptron(self,X,Y):
-        J = len(self.idxToPos.keys())**self.xNgramLen * (len(self.idxToLabel.keys())**self.yNgramLen)
+        numPos    = len(self.idxToPos.keys())+2
+        numLabels = len(self.idxToLabel.keys())+2
+        J = numPos**self.xNgramLen * numLabels**self.yNgramLen
         #initialize w
         W = 0.0001 * np.random.randn(J)
         n,d = X.shape
@@ -126,22 +176,22 @@ class CRFClassifier(Transformer):
         idx = np.arange(n)
         np.random.shuffle(idx)
         X,Y = X[idx,:],Y[idx,:]
-        sampeleCntr = 0
+        sampleCntr = 0
         landa = 1.
         #repeat until convergence
         while not converged:
             #pick next sample
-            x           = X[sampeleCntr,:]
-            y           = Y[sampleCntr,:]
-            sampelCntr  += 1
+            x                 =  X[sampleCntr,:]
+            y                 =  Y[sampleCntr,:]
+            sampleCntr        += 1
             #calculate yhat
-            yhat,xhat   = self.mostProbableY(x,W)
+            yhat,xhat         =  self.mostProbableY(x,y,W)
             #calculate Fj(x,y) and Fj(x,yhat)
-            F,Fidx            = self.nonZeroFeatFuncs(x,W)
-            Fh,Fhidx          = self.nonZeroFeatFuncs(xhat,W)
-            idxTotal          = np.concatenate([Fidx,diffIdx])
-            Fnew,FHnew        = np.zeros(len(idxTotal)),np.zeros(len(idxTotal))
-            cnt               = 0
+            F,Fidx            =  self.nonZeroFeatFuncs(x,W)
+            Fh,Fhidx          =  self.nonZeroFeatFuncs(xhat,W)
+            idxTotal          =  np.concatenate([Fidx,diffIdx])
+            Fnew,FHnew        =  np.zeros(len(idxTotal)),np.zeros(len(idxTotal))
+            cnt               =  0
             for i in idxTotal:
                 i1,i2 = np.where(Fidx==i)[0],np.where(Fhidx==i)[0]
                 if len(i1)==1:

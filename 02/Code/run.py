@@ -32,8 +32,10 @@ X_train=ptf.transform(X_train,y_train)
 X_test=ptf.transform(X_test,y_test)
 
 
-clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len)
-clf.CollinPerceptron(X_train,y_train)
+clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
+                        x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
+                        train_method="CollinPerceptron")
+clf.fit(X_train,y_train)
 
 
 
