@@ -68,7 +68,6 @@ class CRFClassifier(Transformer):
         #initialize U(y,1) as g_0(START,y)
         idx       = A*numYs*numPos+B*numYs+startY*numLabels+np.arange(numLabels)
         U         = W[idx].reshape([-1,1])
-        print U
         bestY     = np.arange(numLabels).reshape([-1,1])
         temp      = np.arange(numLabels).reshape([1,-1])
         bestYs    = dict()
@@ -100,14 +99,21 @@ class CRFClassifier(Transformer):
 
         Y   = []
         idx = -1
-        for i in np.sort(-Us.keys()):
+        keys = -np.asarray(Us.keys())
+        for i in np.sort(keys):
+            print "i:",-i
             bestY = bestYs[-i]
+            print "bestY:",bestY
             U     = Us[-i]
+            print "U:",U
             if idx==-1:
                 idx   = np.argmax(U)
             else:
-            Y.append(idx)
-    
+                idx = U[idx]
+            print "idx:",idx
+            Y.append(bestY[idx])
+#        print Y
+
     
     #############################################
     #sample y* by starting from y, randomly changing
