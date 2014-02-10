@@ -143,15 +143,68 @@ class CRFClassifier(Transformer):
             xhat[i]   = A*numPos*numYs+B*numYs+C*numLabels+D
         return (np.asarray(Y),xhat)
 
-    
+
+    #############################################
+    # update x using the new y
+    #############################################
+    def updateX(self,x,y):
+        numLabels     = len(self.idxToLabel.keys())+2
+        numYs         = numLabels ** self.yNgramLen
+        numPos        = len(self.idxToPos.keys())+2
+        numXs         = numPos ** self.xNgramLen
+        startX        = numPos-1
+        startY        = numLabels-1
+        finished  = False
+        xhat = copy.deepcopy(x)
+        A         = x[0]/(numPos*numYs)
+        B         = (x[0]-A*numPos*numYs)/numYs
+        C         = startY
+        D         = y[0]
+        xhat[0]   = A*numPos*numYs+B*numYs+C*numLabels+D
+        i         = 0
+        while not finished:
+            i         += 1
+            A         = x[i]/(numPos*numYs)
+            B         = (x[i]-A*numPos*numYs)/numYs
+            C         = y[i-1]
+            if x[i+1]==0:
+                finished=True
+                D         = 0
+            else:
+                D         = y[i]
+            xhat[i]   = A*numPos*numYs+B*numYs+C*numLabels+D
+        return xhat
+        
     #############################################
     #sample y* by starting from y, randomly changing
     # tags and accepting the change if  the new y
     # has a higher probability
     #############################################
     def sampleY(self,x,y,W):
-        pass
-    
+        numLabels = len(self.idxToLabel.keys())
+        l         = np.where(x>0)[0].shape[0]
+        n         = l/3
+        finished  = False
+        pCurrent = W[x[np.where(x>0)[0]]].sum()
+        while not finished:
+            #select n rangom positions in y
+            newY = copy.deepcopy(y)
+            idx = np.arange(l)
+            np.random.shuffle(idx)
+            idx = idx[:n]
+#            print idx
+            #flip n tags
+            labelIdx  = np.random.randint(0,numLabels,n)
+            newY[idx] = labelIdx
+            newX      = self.updateX(x,newY)
+            #accept if y_new has higher probability
+            pNew = W[newX[np.where(newX>0)[0]]].sum()
+#            print x
+#            print newX
+#            print pNew,pCurrent
+#            if pNew>pCurrent:
+            finished = True
+        return newX.astype(np.int),newY.astype(np.int)
 
     #############################################
     #predicts the most probable label for X
@@ -186,7 +239,7 @@ class CRFClassifier(Transformer):
             if sampleCntr%n==n-1:
                 Ypredicted = self.predictLabel(X,W)
                 pCorrect = (Y==Ypredicted).sum()/float(Y.shape[1]*Y.shape[0])
-                print np.where(Y!=Ypredicted)
+#                print np.where(Y!=Ypredicted)
 #                pCorrect = (Y[:,1:]==Ypredicted[:,1:]).sum()/float((Y.shape[1]-1)*Y.shape[0])
 #                idxxx = np.any(Y!=Ypredicted,axis=1)
 #                print Y[idxxx,:]-Ypredicted[idxxx,:]
@@ -251,8 +304,7 @@ class CRFClassifier(Transformer):
         numLabels = len(self.idxToLabel.keys())+2
         J = numPos**self.xNgramLen * numLabels**self.yNgramLen
         #initialize w
-#        W = 1. * np.random.randn(J)
-        W = np.zeros(J)
+        W   = 0.00001*np.random.randn(J)
         W[0] = 10
         n,d = X.shape
         converged = False
@@ -260,34 +312,51 @@ class CRFClassifier(Transformer):
         idx = np.arange(n)
         np.random.shuffle(idx)
         X,Y = X[idx,:],Y[idx,:]
-        sampeleCntr = 0
+        sampleCntr = 0
         landa = 1.
         #repeat until convergence
         while not converged:
+#            print "one"
             #pick next sample
-            x           = X[sampeleCntr,:]
+            x           = X[sampleCntr,:]
             y           = Y[sampleCntr,:]
-            sampelCntr  += 1
+            sampleCntr  += 1
+            sampleCntr  %= n
             #calculate yhat
             yhat,xhat   = self.sampleY(x,y,W)
             #calculate Fj(x,y) and Fj(x,yhat)
-            F,Fidx            = self.nonZeroFeatFuncs(x,W)
-            Fh,Fhidx          = self.nonZeroFeatFuncs(xhat,W)
-            idxTotal          = np.concatenate([Fidx,diffIdx])
-            Fnew,FHnew        = np.zeros(len(idxTotal)),np.zeros(len(idxTotal))
-            cnt               = 0
+            F,Fidx            =  self.nonZeroFeatFuncs(x,W)
+            Fh,Fhidx          =  self.nonZeroFeatFuncs(xhat,W)
+            idxTotal          =  np.unique(np.concatenate([Fidx,Fhidx]))
+            Fnew,FHnew        =  np.zeros(len(idxTotal)),np.zeros(len(idxTotal))
+            cnt               =  0
             for i in idxTotal:
                 i1,i2 = np.where(Fidx==i)[0],np.where(Fhidx==i)[0]
                 if len(i1)==1:
                     Fnew[cnt] = F[i1]
+                elif len(i1)>1:
+                    print i1
                 if len(i2)==1:
                     FHnew[cnt] = Fh[i2]
+                elif len(i2)>1:
+                    print i2
                 cnt += 1
             #update w
-            W[Fidx]     = W[Fidx] + landa * (Fnew - FHnew)
+            W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
             #check for convergence
-            Ypredicted = self.predictLabel(X,W)
-            pCorrect = (Y!=Ypredicted).sum() / (Y.shape[0]*Y.shape[1])
-            if pCorrect>0.99:
-                converged = True
-        self.W = w
+            if sampleCntr%n==n-1:
+                Ypredicted = self.predictLabel(X,W)
+                pCorrect   = (Y==Ypredicted).sum()/float(Y.shape[1]*Y.shape[0])
+#                print np.where(Y!=Ypredicted)
+#                pCorrect = (Y[:,1:]==Ypredicted[:,1:]).sum()/float((Y.shape[1]-1)*Y.shape[0])
+#                idxxx = np.any(Y!=Ypredicted,axis=1)
+#                print Y[idxxx,:]-Ypredicted[idxxx,:]
+#                pCorrect = 1. - np.any(Y!=Ypredicted,axis=1).sum()/float(n)
+#                for i in range(n):
+#                    print Y[i,:]
+#                    print Ypredicted[i,:]
+#                    print "\n"
+                print pCorrect
+                if pCorrect>0.99:
+                    converged = True
+        self.W = W

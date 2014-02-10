@@ -10,7 +10,7 @@ print "loading data..."
 
 l = PuncData()
 X_train,y_train,X_test,y_test = l.load()
-n = 100
+n = 500
 start = 100
 X_train = X_train[start:start+n,:]
 y_train = y_train[start:start+n,:]
@@ -40,7 +40,8 @@ X_test=ptf.transform(X_test,y_test)
 print "training classifier..."
 clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
                         x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
-                        train_method="CollinPerceptron")
+#                        train_method="CollinPerceptron")
+                        train_method="CD")
 clf.fit(X_train,y_train)
 
 
