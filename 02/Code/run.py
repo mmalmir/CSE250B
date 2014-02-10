@@ -6,10 +6,14 @@ from CRFClassifier import CRFClassifier
 ######################
 #### loading data ####
 ######################
+print "loading data..."
 
 l = PuncData()
 X_train,y_train,X_test,y_test = l.load()
-
+n = 100
+start = 100
+X_train = X_train[start:start+n,:]
+y_train = y_train[start:start+n,:]
 ######################
 #### feat extrac. ####
 ######################
@@ -27,11 +31,13 @@ X_train,y_train,X_test,y_test = l.load()
 x_ngram_len = 2
 y_ngram_len = 2
 
+print "extracting features..."
 ptf = PosTagFeats(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len)
 X_train=ptf.transform(X_train,y_train)
 X_test=ptf.transform(X_test,y_test)
 
 
+print "training classifier..."
 clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
                         x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
                         train_method="CollinPerceptron")

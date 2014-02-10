@@ -36,11 +36,11 @@ class PuncData:
         n_test           = len(self.testSen.keys())
         d_test           = np.max([len(l) for l in self.testSen.values()])
         #initialize numeric feature vector
-        d                = max(d_train,d_test)
-        X_train          = -1 * np.ones([n_train,d])
-        Y_train          = -1 * np.ones([n_train,d])
-        X_test           = -1 * np.ones([n_test,d])
-        Y_test           = -1 * np.ones([n_test,d])
+        d                = max(d_train,d_test)+2
+        X_train          = 0 * np.ones([n_train,d])
+        Y_train          = 0 * np.ones([n_train,d])
+        X_test           = 0 * np.ones([n_test,d])
+        Y_test           = 0 * np.ones([n_test,d])
         #gather all pos tags
         self.posTags,self.posToIdx,self.idxToPos       = self.labelToIdx(self.trainPos,self.testPos)
         self.yLabels,self.yLabelToIdx,self.idxToYlabel = self.labelToIdx(self.trainLabels,self.testLabels)
@@ -68,13 +68,13 @@ class PuncData:
         l2Tags     = set([t for t in chain(*l2Tags)])
         u          = l1Tags.union(l2Tags)
         #convert pos tags to numeric indices
-        lblToIdx    = dict()
-        idxTolbl    = dict()
-        i                = 0
+        lblToIdx   = dict()
+        idxTolbl   = dict()
+        i          = 1
         for x in u:
             lblToIdx[x] = i
             idxTolbl[i] = x
-            i                += 1
+            i           += 1
         return (u,lblToIdx,idxTolbl)
     
     
