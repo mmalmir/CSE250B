@@ -229,16 +229,20 @@ class CRFClassifier(Transformer):
         n,d = X.shape
         converged = False
         #shuffle input samples
+        validation = 1./3.
         idx = np.arange(n)
         np.random.shuffle(idx)
         X,Y = X[idx,:],Y[idx,:]
+        vX,vY=X[:validation*n,:],Y[:validation*n,:]
+        X,Y=X[validation*n:,:],Y[validation*n:,:]
+        n,d = X.shape
         sampleCntr = 0
         landa = 1.
         #repeat until convergence
         while not converged:
             if sampleCntr%n==n-1:
-                Ypredicted = self.predictLabel(X,W)
-                pCorrect = (Y==Ypredicted).sum()/float(Y.shape[1]*Y.shape[0])
+                Ypredicted = self.predictLabel(vX,W)
+                pCorrect = (vY==Ypredicted).sum()/float(vY.shape[1]*vY.shape[0])
 #                print np.where(Y!=Ypredicted)
 #                pCorrect = (Y[:,1:]==Ypredicted[:,1:]).sum()/float((Y.shape[1]-1)*Y.shape[0])
 #                idxxx = np.any(Y!=Ypredicted,axis=1)
@@ -309,9 +313,13 @@ class CRFClassifier(Transformer):
         n,d = X.shape
         converged = False
         #shuffle input samples
+        validation = 1./3.
         idx = np.arange(n)
         np.random.shuffle(idx)
         X,Y = X[idx,:],Y[idx,:]
+        vX,vY=X[:validation*n,:],Y[:validation*n,:]
+        X,Y=X[validation*n:,:],Y[validation*n:,:]
+        n,d = X.shape
         sampleCntr = 0
         landa = 1.
         #repeat until convergence
@@ -345,8 +353,8 @@ class CRFClassifier(Transformer):
             W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
             #check for convergence
             if sampleCntr%n==n-1:
-                Ypredicted = self.predictLabel(X,W)
-                pCorrect   = (Y==Ypredicted).sum()/float(Y.shape[1]*Y.shape[0])
+                Ypredicted = self.predictLabel(vX,W)
+                pCorrect   = (vY==Ypredicted).sum()/float(vY.shape[1]*vY.shape[0])
 #                print np.where(Y!=Ypredicted)
 #                pCorrect = (Y[:,1:]==Ypredicted[:,1:]).sum()/float((Y.shape[1]-1)*Y.shape[0])
 #                idxxx = np.any(Y!=Ypredicted,axis=1)

@@ -10,7 +10,7 @@ print "loading data..."
 
 l = PuncData()
 X_train,y_train,X_test,y_test = l.load()
-n = 500
+n = 5000
 start = 100
 X_train = X_train[start:start+n,:]
 y_train = y_train[start:start+n,:]
