@@ -370,6 +370,8 @@ class CRFClassifier(Transformer):
             #update w
             Wtemp = copy.deepcopy(W)
             W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
+            Xs = np.arange(numPos**2).astype(np.int)*numLabels**2+16
+            W[Xs] = 0
             mn,mx = -0.1,0.1
             for i in idxTotal:
                 if W[i]>mx:
@@ -407,7 +409,6 @@ class CRFClassifier(Transformer):
             W   = 0.00001*np.random.randn(J)
         else:
             W   = self.W
-        W[0] = 10
         n,d = X.shape
         converged = False
         #shuffle input samples
@@ -453,7 +454,9 @@ class CRFClassifier(Transformer):
                 cnt += 1
             #update w
             Wtemp = copy.deepcopy(W)
-            W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
+            W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew) #- np.random.randn()*W[idxTotal]/(numEpochs*20)
+#            Xs = np.arange(numPos**2).astype(np.int)*numLabels**2+16
+#            W[Xs] = 0
             mn,mx = -0.1,0.1
             for i in idxTotal:
                 if W[i]>mx:

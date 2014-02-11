@@ -11,10 +11,11 @@ print "loading data..."
 
 l = PuncData()
 X_train,y_train,X_test,y_test = l.load()
-n = -1
+n = 50000
 start = 0
 X_train = X_train[start:start+n,:]
 y_train = y_train[start:start+n,:]
+
 ######################
 #### feat extrac. ####
 ######################
@@ -43,14 +44,14 @@ X_test=ptf.transform(X_test,y_test)
 print "training classifier..."
 clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
                         x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
-#                        train_method="CollinPerceptron",
-                        train_method="CD",
-                        sampling="posterior",
+                        train_method="CollinPerceptron",
+#                        train_method="CD",
+                        sampling="random",
                         )
 clf.fit(X_train,y_train)
 #clf.train_method = "CD"
-clf.sampling="random"
-clf.fit(X_train,y_train)
+#clf.sampling="random"
+#clf.fit(X_train,y_train)
 #clf.sampling="posterior"
 #clf.fit(X_train,y_train)
 #clf.sampling="guided"
@@ -60,6 +61,27 @@ idxNonZero = np.where(X_train!=0)
 
 Ypredicted = clf.transform(X_train)
 pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
+
+
+hist = np.zeros(Ypredicted.shape[0])
+for i in range(Ypredicted.shape[0]):
+    idxEnd = np.where(Ypredicted[i,:]==0)[0][0]
+    hist[i] = Ypredicted[i,idxEnd-1]
+cnt,bins= np.histogram(hist,bins=np.arange(0,8))
+print hist
+print l.idxToYlabel
+print cnt,bins
+
+
+hist = np.zeros(y_train.shape[0])
+for i in range(y_train.shape[0]):
+    idxEnd = np.where(y_train[i,:]==0)[0][0]
+    hist[i] = y_train[i,idxEnd-1]
+print hist
+cnt,bins= np.histogram(hist,bins=np.arange(0,8))
+print l.idxToYlabel
+print cnt,bins
+
 
 print "################################################"
 print "TRAIN STATS:"
@@ -78,7 +100,7 @@ print "TEST STATS:"
 print "################################################"
 
 
-ntest = -1
+ntest = 20000
 start = 0
 X_test = X_test[start:start+ntest,:]
 y_test = y_test[start:start+ntest,:]
