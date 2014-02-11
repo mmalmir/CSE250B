@@ -174,7 +174,82 @@ class CRFClassifier(Transformer):
                 D         = y[i]
             xhat[i]   = A*numPos*numYs+B*numYs+C*numLabels+D
         return xhat
-        
+    
+    #############################################
+    #sample y* by from posterior P(y_idx | y_{-idx})
+    #############################################
+    def posterior(self,x,y,W,idx):
+        numLabels     = len(self.idxToLabel.keys())+2
+        numYs         = numLabels ** self.yNgramLen
+        numPos        = len(self.idxToPos.keys())+2
+        numXs         = numPos ** self.xNgramLen
+        startX        = numPos-1
+        startY        = numLabels-1
+        l             = np.where(x>0)[0].shape[0]
+        yNew          = copy.deepcopy(y)
+        for i in idx:
+            A = x[i]/(numPos*numYs)
+            B = (x[i]-A*numPos*numYs)/numYs
+            if i==0:
+                yPre = startY
+            else:
+                yPre = y[i-1]
+            if i==l-2:
+                yNext = 0
+            else:
+                yNext = y[i+1]
+            Py  = np.zeros(numLabels)
+            for yy in range(numLabels):
+                  g_i       = W[A*numPos*numYs+B*numYs+yPre*numLabels+yy]
+                  g_iP1     = W[A*numPos*numYs+B*numYs+yy*numLabels+yNext]
+                  Py[yy]    = np.exp(g_i)*np.exp(g_iP1)
+            Py = Py / Py.sum()
+            #select a sample
+            newSample = np.random.multinomial(1,Py)
+            yNew[i] = np.where(newSample)[0][0]
+        return yNew
+
+    
+    #############################################
+    #sample y* by from posterior P(y_idx | y_{-idx})
+    #############################################
+    def guidedSample(self,x,y,W):
+        idx           = np.where((y!=2) * (y!=4) * (y!=0))[0]
+        numLabels     = len(self.idxToLabel.keys())+2
+        numYs         = numLabels ** self.yNgramLen
+        numPos        = len(self.idxToPos.keys())+2
+        numXs         = numPos ** self.xNgramLen
+        startX        = numPos-1
+        startY        = numLabels-1
+        l             = np.where(x>0)[0].shape[0]
+        yNew          = copy.deepcopy(y)
+        for i in idx:
+            A = x[i]/(numPos*numYs)
+            B = (x[i]-A*numPos*numYs)/numYs
+            if i==0:
+                yPre = startY
+            else:
+                yPre = y[i-1]
+            if i==l-2:
+                yNext = 0
+            else:
+                yNext = y[i+1]
+            Py  = np.zeros(numLabels)
+            for yy in range(numLabels):
+                if yy not in [2,4]:
+                    Py[yy] = 0
+                else:
+                    g_i       = W[A*numPos*numYs+B*numYs+yPre*numLabels+yy]
+                    g_iP1     = W[A*numPos*numYs+B*numYs+yy*numLabels+yNext]
+                    Py[yy]   = np.exp(g_i)*np.exp(g_iP1)
+            Py = Py / Py.sum()
+            #select a sample
+            newSample = np.random.multinomial(1,Py)
+            yNew[i] = np.where(newSample)[0][0]
+        return yNew
+    
+    
+    
     #############################################
     #sample y* by starting from y, randomly changing
     # tags and accepting the change if  the new y
@@ -183,29 +258,38 @@ class CRFClassifier(Transformer):
     def sampleY(self,x,y,W):
         numLabels = len(self.idxToLabel.keys())
         l         = np.where(x>0)[0].shape[0]
-        n         = l/3
+        n         = 1
         finished  = False
         pCurrent = W[x[np.where(x>0)[0]]].sum()
+        cntr = 0
         while not finished:
             #select n rangom positions in y
             newY = copy.deepcopy(y)
-            idx = np.arange(l)
+            idx = np.arange(l-1)
             np.random.shuffle(idx)
             idx = idx[:n]
 #            print idx
             #flip n tags
             labelIdx  = np.random.randint(0,numLabels,n)
-            newY[idx] = labelIdx
+#            newY      = self.posterior(x,y,W,idx)
+#            newY[idx] = labelIdx
+            newY      = self.guidedSample(x,y,W)
             newX      = self.updateX(x,newY)
             #accept if y_new has higher probability
             pNew = W[newX[np.where(newX>0)[0]]].sum()
 #            print x
 #            print newX
 #            print pNew,pCurrent
-#            if pNew>pCurrent:
-            finished = True
+            if pNew>pCurrent or cntr>10:
+                finished = True
+            cntr += 1
         return newX.astype(np.int),newY.astype(np.int)
 
+    def transform(self,X,**kwargs):
+        self.set_params(**kwargs)
+        return self.predictLabel(X,self.W)
+    
+    
     #############################################
     #predicts the most probable label for X
     #############################################
@@ -233,25 +317,19 @@ class CRFClassifier(Transformer):
         idx = np.arange(n)
         np.random.shuffle(idx)
         X,Y = X[idx,:],Y[idx,:]
-        vX,vY=X[:validation*n,:],Y[:validation*n,:]
-        X,Y=X[validation*n:,:],Y[validation*n:,:]
+        vX,vY=X[:int(validation*n),:],Y[:int(validation*n),:]
+        X,Y=X[int(validation*n):,:],Y[int(validation*n):,:]
         n,d = X.shape
+        idxNonZero = np.where(vX!=0)
         sampleCntr = 0
         landa = 1.
         #repeat until convergence
         while not converged:
-            if sampleCntr%n==n-1:
+            if sampleCntr%n==0:
+#                Ypredicted = self.predictLabel(vX,W)
+#                pCorrect = (vY==Ypredicted).sum()/float(vY.shape[1]*vY.shape[0])
                 Ypredicted = self.predictLabel(vX,W)
-                pCorrect = (vY==Ypredicted).sum()/float(vY.shape[1]*vY.shape[0])
-#                print np.where(Y!=Ypredicted)
-#                pCorrect = (Y[:,1:]==Ypredicted[:,1:]).sum()/float((Y.shape[1]-1)*Y.shape[0])
-#                idxxx = np.any(Y!=Ypredicted,axis=1)
-#                print Y[idxxx,:]-Ypredicted[idxxx,:]
-#                pCorrect = 1. - np.any(Y!=Ypredicted,axis=1).sum()/float(n)
-#                for i in range(n):
-#                    print Y[i,:]
-#                    print Ypredicted[i,:]
-#                    print "\n"
+                pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
                 print pCorrect
                 if pCorrect>0.99:
                     converged = True
@@ -323,6 +401,9 @@ class CRFClassifier(Transformer):
         sampleCntr = 0
         landa = 1.
         #repeat until convergence
+        idxNonZero = np.where(vX!=0)
+        lastValidationError = 0.
+        cntEq = 0
         while not converged:
 #            print "one"
             #pick next sample
@@ -350,21 +431,22 @@ class CRFClassifier(Transformer):
                     print i2
                 cnt += 1
             #update w
+            Wtemp = copy.deepcopy(W)
             W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
             #check for convergence
-            if sampleCntr%n==n-1:
+            if sampleCntr%n==0:
+                #                Ypredicted = self.predictLabel(X,W)
+                #                pCorrect   = (Y==Ypredicted).sum()/float(Y.shape[1]*Y.shape[0])
+                #                pCorrect   = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
                 Ypredicted = self.predictLabel(vX,W)
-                pCorrect   = (vY==Ypredicted).sum()/float(vY.shape[1]*vY.shape[0])
-#                print np.where(Y!=Ypredicted)
-#                pCorrect = (Y[:,1:]==Ypredicted[:,1:]).sum()/float((Y.shape[1]-1)*Y.shape[0])
-#                idxxx = np.any(Y!=Ypredicted,axis=1)
-#                print Y[idxxx,:]-Ypredicted[idxxx,:]
-#                pCorrect = 1. - np.any(Y!=Ypredicted,axis=1).sum()/float(n)
-#                for i in range(n):
-#                    print Y[i,:]
-#                    print Ypredicted[i,:]
-#                    print "\n"
+                pCorrect   = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
                 print pCorrect
-                if pCorrect>0.99:
+                if pCorrect==lastValidationError:
+                    cntEq += 1
+                else:
+                    cntEq = 0
+                if pCorrect<lastValidationError or cntEq>1:
                     converged = True
+                    W = Wtemp
+                lastValidationError = pCorrect
         self.W = W

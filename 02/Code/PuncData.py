@@ -13,6 +13,29 @@ class PuncData:
         self.trainLabels       = self.dataPath+"trainingLabels.txt"
         self.testSen           = self.dataPath+"testSentences.txt"
         self.testLabels        = self.dataPath+"testLabels.txt"
+        self.closeClass        = {
+                                    "ADJ":("JJ","JJS","JJR","PDT","DT"),
+                                    "PRP":("PRP","PRP$"),
+                                    "NN":("NN","NNS","NNP","NNPS","FW"),
+                                    "VB":("VBD","VBG","VBP","VBN","VBZ","VB"),
+                                    "WH":("WP","WP$","WDT","WRB"),
+                                    "RB":("RB","RBR","RBS"),
+                                    "Noise":("#","''","$",":","(",")"),
+                                    "POS":("POS"),
+#                                    "WDT":("WDT","WRB"),
+#                                    "DT":("DT"),
+#                                    "FW":("FW"),
+#                                    "TO":("TO"),
+#                                    "WRB":("WRB"),
+                                    "CC":("CC"),
+#                                    "PDT":("PDT"),
+                                    "CD":("CD"),
+                                    "IN":("IN","TO"),
+                                    "EX":("EX"),
+                                    "MD":("MD"),
+                                    "SYM":("SYM"),
+                                    "UH":("UH"),
+                                }
         self.set_params(**kwargs)
 
     
@@ -89,6 +112,9 @@ class PuncData:
             for i in sentences[k].keys():
                 token       = sentences[k][i]
                 tags[k][i]  = tagger(token)[0][1]
+                for j in self.closeClass.keys():
+                    if tags[k][i] in self.closeClass[j]:
+                        tags[k][i] = j
             if len(tags[k].keys())!=len(sentences[k].keys()):
                 print tokens,tags
         return tags
