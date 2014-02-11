@@ -27,9 +27,9 @@ y_train = y_train[start:start+n,:]
 #l,X_train,y_train,X_test,y_test = pickle.load(f)
 #f.close()
 
-print l.idxToYlabel
-
-print l.idxToPos
+#print l.idxToYlabel
+#
+#print l.idxToPos
 
 x_ngram_len = 2
 y_ngram_len = 2
@@ -45,12 +45,43 @@ clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
                         x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
 #                        train_method="CollinPerceptron",
                         train_method="CD",
+                        sampling="posterior",
                         )
 clf.fit(X_train,y_train)
+#clf.train_method = "CD"
+clf.sampling="random"
+clf.fit(X_train,y_train)
+#clf.sampling="posterior"
+#clf.fit(X_train,y_train)
+#clf.sampling="guided"
+#clf.fit(X_train,y_train)
+
+idxNonZero = np.where(X_train!=0)
+
+Ypredicted = clf.transform(X_train)
+pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
+
+print "################################################"
+print "TRAIN STATS:"
+print "################################################"
+for x in l.idxToYlabel.keys():
+    idx = np.where(y_train==x)
+    pCorrect = (y_train[idx]==Ypredicted[idx]).sum()/float(Ypredicted[idx].shape[0])
+    print "for tag:",l.idxToYlabel[x]," rate is:",pCorrect, " num is:",Ypredicted[idx].shape[0]
+pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
+print "train rate:",pCorrect
+
+print "\n"
+
+print "################################################"
+print "TEST STATS:"
+print "################################################"
 
 
-#X_test = X_test[1:100,:]
-#y_test = y_test[1:100,:]
+ntest = -1
+start = 0
+X_test = X_test[start:start+ntest,:]
+y_test = y_test[start:start+ntest,:]
 
 idxNonZero = np.where(X_test!=0)
 
@@ -62,7 +93,7 @@ for x in l.idxToYlabel.keys():
     idx = np.where(y_test==x)
     pCorrect = (y_test[idx]==Ypredicted[idx]).sum()/float(Ypredicted[idx].shape[0])
     print "for tag:",l.idxToYlabel[x]," rate is:",pCorrect, " num is:",Ypredicted[idx].shape[0]
-
+pCorrect = (y_test[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
 print "test rate:",pCorrect
 
 

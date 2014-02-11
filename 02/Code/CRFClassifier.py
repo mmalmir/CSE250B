@@ -16,6 +16,7 @@ class CRFClassifier(Transformer):
         self.idxToLabel  = dict()
         self.idxToPos    = dict()
         self.trainMethod = "CD"#conrtastive divergence
+        self.W           = None
         self.set_params(**kwargs)
 
 
@@ -31,6 +32,8 @@ class CRFClassifier(Transformer):
                 self.idxToPos    = kwargs[k]
             elif k=="train_method":
                 self.trainMethod = kwargs[k]
+            elif k=="sampling":
+                self.samplingMethod = kwargs[k]
 
 
     #for two given samples x,xhat and given weight vector W,
@@ -215,6 +218,8 @@ class CRFClassifier(Transformer):
     #############################################
     def guidedSample(self,x,y,W):
         idx           = np.where((y!=2) * (y!=4) * (y!=0))[0]
+        if idx.shape[0]>0:
+            idx       = [idx[np.random.randint(0,idx.shape[0])]]
         numLabels     = len(self.idxToLabel.keys())+2
         numYs         = numLabels ** self.yNgramLen
         numPos        = len(self.idxToPos.keys())+2
@@ -255,7 +260,7 @@ class CRFClassifier(Transformer):
     # tags and accepting the change if  the new y
     # has a higher probability
     #############################################
-    def sampleY(self,x,y,W):
+    def sampleY(self,x,y,W,method):
         numLabels = len(self.idxToLabel.keys())
         l         = np.where(x>0)[0].shape[0]
         n         = 1
@@ -268,20 +273,27 @@ class CRFClassifier(Transformer):
             idx = np.arange(l-1)
             np.random.shuffle(idx)
             idx = idx[:n]
-#            print idx
             #flip n tags
-            labelIdx  = np.random.randint(0,numLabels,n)
-#            newY      = self.posterior(x,y,W,idx)
-#            newY[idx] = labelIdx
-            newY      = self.guidedSample(x,y,W)
-            newX      = self.updateX(x,newY)
-            #accept if y_new has higher probability
-            pNew = W[newX[np.where(newX>0)[0]]].sum()
-#            print x
-#            print newX
-#            print pNew,pCurrent
-            if pNew>pCurrent or cntr>10:
+            if method=="random":
+                labelIdx  = np.random.randint(0,numLabels,n)
+                newY[idx] = labelIdx
+                newX = self.updateX(x,newY)
                 finished = True
+            elif method=="guided":
+                idxnonSpace = np.where((y!=2) * (y!=4) * (y!=0))[0]
+                if idxnonSpace.shape[0]==0:
+                    newY      = self.posterior(x,y,W,idx)
+                else:
+                    newY      = self.guidedSample(x,y,W)
+                newX = self.updateX(x,newY)
+                finished = True
+            elif method=="posterior":
+                newY      = self.posterior(x,y,W,idx)
+                newX = self.updateX(x,newY)
+                pNew = W[newX[np.where(newX>0)[0]]].sum()
+                if pNew>pCurrent or cntr>5:
+                    finished = True
+            #accept if y_new has higher probability
             cntr += 1
         return newX.astype(np.int),newY.astype(np.int)
 
@@ -309,7 +321,10 @@ class CRFClassifier(Transformer):
         numLabels = len(self.idxToLabel.keys())+2
         J = numPos**self.xNgramLen * numLabels**self.yNgramLen
         #initialize w
-        W   = 0.00001*np.random.randn(J)
+        if self.W == None:
+            W   = 0.00001*np.random.randn(J)
+        else:
+            W   = self.W
         n,d = X.shape
         converged = False
         #shuffle input samples
@@ -322,17 +337,12 @@ class CRFClassifier(Transformer):
         n,d = X.shape
         idxNonZero = np.where(vX!=0)
         sampleCntr = 0
-        landa = 1.
+        landa = 0.001
         #repeat until convergence
+        lastValidationError = 0.
+        cntEq = 0
+        numEpochs = 0
         while not converged:
-            if sampleCntr%n==0:
-#                Ypredicted = self.predictLabel(vX,W)
-#                pCorrect = (vY==Ypredicted).sum()/float(vY.shape[1]*vY.shape[0])
-                Ypredicted = self.predictLabel(vX,W)
-                pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
-                print pCorrect
-                if pCorrect>0.99:
-                    converged = True
             #pick next sample
             x                 =  X[sampleCntr,:]
             y                 =  Y[sampleCntr,:]
@@ -340,79 +350,6 @@ class CRFClassifier(Transformer):
             sampleCntr        = sampleCntr % n
             #calculate yhat
             yhat,xhat         =  self.mostProbableY(x,W)
-#            print x
-#            print y
-#            print xhat
-#            print yhat
-#            print W[x[np.where(x>0)[0]]]
-#            print "\n"
-            #calculate Fj(x,y) and Fj(x,yhat)
-            F,Fidx            =  self.nonZeroFeatFuncs(x,W)
-            Fh,Fhidx          =  self.nonZeroFeatFuncs(xhat,W)
-            idxTotal          =  np.unique(np.concatenate([Fidx,Fhidx]))
-            Fnew,FHnew        =  np.zeros(len(idxTotal)),np.zeros(len(idxTotal))
-            cnt               =  0
-            for i in idxTotal:
-                i1,i2 = np.where(Fidx==i)[0],np.where(Fhidx==i)[0]
-                if len(i1)==1:
-                    Fnew[cnt] = F[i1]
-                elif len(i1)>1:
-                    print i1
-                if len(i2)==1:
-                    FHnew[cnt] = Fh[i2]
-                elif len(i2)>1:
-                    print i2
-                cnt += 1
-            #update w
-#            print x
-#            print idxTotal
-#            print landa * (Fnew - FHnew)
-##            print Fnew
-##            print FHnew
-#            print W[idxTotal]
-#            print "\n"
-            W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
-#            print (W[np.where(W>0)[0]])
-#            print landa * (Fnew - FHnew)
-        self.W = W
-
-    #############################################
-    #train the model using Collin's perceptron
-    # wj <- wj + landa x [ Fj(x,y) - Fj(x,y*) ]
-    # y* is the evil twin
-    #############################################
-    def contrastiveDivergence(self,X,Y):
-        numPos    = len(self.idxToPos.keys())+2
-        numLabels = len(self.idxToLabel.keys())+2
-        J = numPos**self.xNgramLen * numLabels**self.yNgramLen
-        #initialize w
-        W   = 0.00001*np.random.randn(J)
-        W[0] = 10
-        n,d = X.shape
-        converged = False
-        #shuffle input samples
-        validation = 1./3.
-        idx = np.arange(n)
-        np.random.shuffle(idx)
-        X,Y = X[idx,:],Y[idx,:]
-        vX,vY=X[:validation*n,:],Y[:validation*n,:]
-        X,Y=X[validation*n:,:],Y[validation*n:,:]
-        n,d = X.shape
-        sampleCntr = 0
-        landa = 1.
-        #repeat until convergence
-        idxNonZero = np.where(vX!=0)
-        lastValidationError = 0.
-        cntEq = 0
-        while not converged:
-#            print "one"
-            #pick next sample
-            x           = X[sampleCntr,:]
-            y           = Y[sampleCntr,:]
-            sampleCntr  += 1
-            sampleCntr  %= n
-            #calculate yhat
-            yhat,xhat   = self.sampleY(x,y,W)
             #calculate Fj(x,y) and Fj(x,yhat)
             F,Fidx            =  self.nonZeroFeatFuncs(x,W)
             Fh,Fhidx          =  self.nonZeroFeatFuncs(xhat,W)
@@ -433,6 +370,96 @@ class CRFClassifier(Transformer):
             #update w
             Wtemp = copy.deepcopy(W)
             W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
+            mn,mx = -0.1,0.1
+            for i in idxTotal:
+                if W[i]>mx:
+                    W[i] = mx
+                elif W[i] < mn:
+                    W[i] = mn
+            if sampleCntr%n==0:
+                Ypredicted = self.predictLabel(vX,W)
+                pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
+                if pCorrect==lastValidationError:
+                    cntEq += 1
+                else:
+                    cntEq = 0
+#                if pCorrect<lastValidationError or cntEq>10:
+                if  numEpochs>5 or cntEq>5:
+                    converged = True
+                    W = Wtemp
+                lastValidationError = pCorrect
+                print pCorrect
+                numEpochs += 1
+        self.W = W
+        self.printW(W,20)
+
+    #############################################
+    #train the model using Collin's perceptron
+    # wj <- wj + landa x [ Fj(x,y) - Fj(x,y*) ]
+    # y* is the evil twin
+    #############################################
+    def contrastiveDivergence(self,X,Y):
+        numPos    = len(self.idxToPos.keys())+2
+        numLabels = len(self.idxToLabel.keys())+2
+        J = numPos**self.xNgramLen * numLabels**self.yNgramLen
+        #initialize w
+        if self.W==None:
+            W   = 0.00001*np.random.randn(J)
+        else:
+            W   = self.W
+        W[0] = 10
+        n,d = X.shape
+        converged = False
+        #shuffle input samples
+        validation = 1./3.
+        idx = np.arange(n)
+        np.random.shuffle(idx)
+        X,Y = X[idx,:],Y[idx,:]
+        vX,vY=X[:validation*n,:],Y[:validation*n,:]
+        X,Y=X[validation*n:,:],Y[validation*n:,:]
+        n,d = X.shape
+        sampleCntr = 0
+        landa = 0.01
+        #repeat until convergence
+        idxNonZero = np.where(vX!=0)
+        lastValidationError = 0.
+        cntEq = 0
+        numEpochs = 0
+        while not converged:
+#            print "one"
+            #pick next sample
+            x           = X[sampleCntr,:]
+            y           = Y[sampleCntr,:]
+            sampleCntr  += 1
+            sampleCntr  %= n
+            #calculate yhat
+            yhat,xhat   = self.sampleY(x,y,W,self.samplingMethod)
+            #calculate Fj(x,y) and Fj(x,yhat)
+            F,Fidx            =  self.nonZeroFeatFuncs(x,W)
+            Fh,Fhidx          =  self.nonZeroFeatFuncs(xhat,W)
+            idxTotal          =  np.unique(np.concatenate([Fidx,Fhidx]))
+            Fnew,FHnew        =  np.zeros(len(idxTotal)),np.zeros(len(idxTotal))
+            cnt               =  0
+            for i in idxTotal:
+                i1,i2 = np.where(Fidx==i)[0],np.where(Fhidx==i)[0]
+                if len(i1)==1:
+                    Fnew[cnt] = F[i1]
+                elif len(i1)>1:
+                    print i1
+                if len(i2)==1:
+                    FHnew[cnt] = Fh[i2]
+                elif len(i2)>1:
+                    print i2
+                cnt += 1
+            #update w
+            Wtemp = copy.deepcopy(W)
+            W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
+            mn,mx = -0.1,0.1
+            for i in idxTotal:
+                if W[i]>mx:
+                    W[i] = mx
+                elif W[i] < mn:
+                    W[i] = mn
             #check for convergence
             if sampleCntr%n==0:
                 #                Ypredicted = self.predictLabel(X,W)
@@ -445,8 +472,35 @@ class CRFClassifier(Transformer):
                     cntEq += 1
                 else:
                     cntEq = 0
-                if pCorrect<lastValidationError or cntEq>1:
+#                if pCorrect<lastValidationError or cntEq>1:
+                if numEpochs>5 or cntEq>1:
                     converged = True
                     W = Wtemp
+                numEpochs += 1
                 lastValidationError = pCorrect
         self.W = W
+        self.printW(W,20)
+
+    #print the n largest elements of W
+    def printW(self,W,n):
+        numLabels     = len(self.idxToLabel.keys())+2
+        numYs         = numLabels ** self.yNgramLen
+        numPos        = len(self.idxToPos.keys())+2
+        numXs         = numPos ** self.xNgramLen
+        startX        = numPos-1
+        startY        = numLabels-1
+        indices       = np.argsort(-W)
+        newPosDic     = copy.deepcopy(self.idxToPos)
+        newPosDic[0]  = "STOP"
+        newPosDic[numPos-1]  = "START"
+        newLblDic     = copy.deepcopy(self.idxToLabel)
+        newLblDic[0]  = "STOP"
+        newLblDic[numLabels-1]  = "START"
+        for i in range(n):
+            idx = indices[i]
+            A   = idx/(numPos*numYs)
+            B   = (idx-A*numPos*numYs)/numYs
+            C   = (idx-A*numPos*numYs-B*numYs)/numLabels
+            D   = idx % numLabels
+            print W[idx],newPosDic[A],newPosDic[B],newLblDic[C],newLblDic[D]
+
