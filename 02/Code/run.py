@@ -1,4 +1,5 @@
 import pickle
+import pprint
 import numpy as np
 from PuncData import PuncData
 from PosTagFeats import PosTagFeats
@@ -11,7 +12,8 @@ print "loading data..."
 
 l = PuncData()
 X_train,y_train,X_test,y_test = l.load()
-n = -1
+n = 100
+ntest = 100
 start = 0
 X_train = X_train[start:start+n,:]
 y_train = y_train[start:start+n,:]
@@ -43,19 +45,17 @@ X_test=ptf.transform(X_test,y_test)
 print "training classifier..."
 clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
                         x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
-#                        train_method="CollinPerceptron",
-                        train_method="CD",
-                        sampling="posterior",
+                        train_method="CollinPerceptron",
                         )
 clf.fit(X_train,y_train)
-#clf.train_method = "CD"
-clf.sampling="random"
-clf.fit(X_train,y_train)
-#clf.sampling="posterior"
-#clf.fit(X_train,y_train)
-#clf.sampling="guided"
-#clf.fit(X_train,y_train)
 
+print "calculating probabilities..."
+Y,P = clf.calculateProbability(X_train[0,:],clf.W)
+idx = np.argsort(-P)
+print Y[idx[1:10],:]
+print y_train[0,:]
+print clf.mostProbableY(X_train[0,:],clf.W)
+print -np.sort(-P)
 idxNonZero = np.where(X_train!=0)
 
 Ypredicted = clf.transform(X_train)
