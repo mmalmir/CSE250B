@@ -341,7 +341,7 @@ class CRFClassifier(Transformer):
         n,d = X.shape
         idxNonZero = np.where(vX!=0)
         sampleCntr = 0
-        landa = 0.001
+        landa = 1.
         #repeat until convergence
         lastValidationError = 0.
         cntEq = 0
@@ -376,12 +376,12 @@ class CRFClassifier(Transformer):
             W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
             Xs = np.arange(numPos**2).astype(np.int)*numLabels**2+16
             W[Xs] = 0
-            mn,mx = -0.1,0.1
-            for i in idxTotal:
-                if W[i]>mx:
-                    W[i] = mx
-                elif W[i] < mn:
-                    W[i] = mn
+#            mn,mx = -0.1,0.1
+#            for i in idxTotal:
+#                if W[i]>mx:
+#                    W[i] = mx
+#                elif W[i] < mn:
+#                    W[i] = mn
             if sampleCntr%n==0:
                 numEpochs += 1
                 Ypredicted = self.predictLabel(vX,W)

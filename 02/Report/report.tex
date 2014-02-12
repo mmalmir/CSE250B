@@ -44,11 +44,21 @@ For the given training and test data, danger of over-fitting is high because of 
 \subsection{Contrastive divergence}
 \subsubsection{Gibbs sampling}
 \section{Design of Experiments}
+
+To test the proposed model, we perform several experiments on the given dataset, which is an English language punctuation dataset that consists of 70115 training and 28027 test sentences. We use only training data to fit the model,  one third for validation and two thirds for training.	 After training is complete, the test data is used to assess prediction and generalization of the model. Each sentence in the training data consists of a set of words without any punctuation symbols. For multiple sentences, there was a few form of syntax complications such as use of '\$' in place of the word 'money', or words that were split to two parts by space *****. We ignored all such cases, as they were few sentences and finding a complete list of them required going through the entire dataset which was very time consuming.\\
+
+
 \subsection{Initialization}
+For Collin's Perceptron, as pointed out in the lecture, the learning rate can be fixed to $\lambda=1$. This is because scaling scaling the weight vector $w$ does not affect the predicted label by the model. Using different learning rates leads to different weight vectors that are scaled versions of each other. However, one should note that this is correct only if the model converges to the global optimum ******. For both experiments on Collin's Perceptron and Contrastive Divergence, we fix $\lambda \leftarrow 1$. \\
+For initializing the weight vector $w$, we use small random Normal numbers from $\mathcal N(0.,1e-5)$. This is because as we describe later, limiting the weight vector entries $w_j$ to be in a small range $[-a,a]$ helps to prevent over-fitting. Because both $a$ and $-a$ represents the extreme learned situation, a good option for initial weights is a random vector that is not biased for specific feature functions, that is $w_j$ better be close to 0 for all $j$.\\
 \subsection{Preprocessing}
 \subsection{Performance Measure}
+We report the performance of the models in two different ways. First, we report the prediction of individual target tags, That is, how accurate the model can predict the individual punctuations tags in corpus sentences. We report the accuracy of prediction for the entire tags as wells as individual target tags. The benefit of looking into individual punctuation tag prediction is that it reveals if over-fitting has happened due to imbalanced distribution of tags in the training data. Next, we report the accuracy of model for predicting sentence punctuation. The accuracy for this case should be lower because each sentence punctuation is composed of multiple tags. 
 \section{Results of Experiments}
 \subsection{Collins perceptron}
+
+
+
 \subsection{Gibbs sampling}
 
 \section{Findings and Lessons Learned}

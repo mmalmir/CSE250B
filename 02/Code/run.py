@@ -4,7 +4,7 @@ import numpy as np
 from PuncData import PuncData
 from PosTagFeats import PosTagFeats
 from CRFClassifier import CRFClassifier
-
+from confmat import *
 ######################
 #### loading data ####
 ######################
@@ -53,15 +53,15 @@ clf.fit(X_train,y_train)
 
 
 
-print "calculating probabilities..."
-Y,P = clf.calculateProbability(X_train[0,:],clf.W)
-idx = np.argsort(-P)
-print Y[idx[1:10],:]
-print y_train[0,:]
-print clf.mostProbableY(X_train[0,:],clf.W)
-print -np.sort(-P)
-idxNonZero = np.where(X_train!=0)
+#print "calculating probabilities..."
+#Y,P = clf.calculateProbability(X_train[10,:],clf.W)
+#idx = np.argsort(-P)
+#print Y[idx[1:10],:]
+#print y_train[10,:]
+#print clf.mostProbableY(X_train[10,:],clf.W)
+#print -np.sort(-P)
 
+idxNonZero = np.where(X_train!=0)
 Ypredicted = clf.transform(X_train)
 pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
 
@@ -85,7 +85,9 @@ print l.idxToYlabel
 #cnt,bins= np.histogram(hist,bins=np.arange(0,8))
 #print l.idxToYlabel
 #print cnt,bins
-
+conf = confMat(y_train,Ypredicted,l.idxToYlabel)
+pprint.pprint(conf)
+plotConfMat(conf)
 
 print "################################################"
 print "TRAIN STATS:"
