@@ -17,6 +17,7 @@ class CRFClassifier(Transformer):
         self.idxToPos    = dict()
         self.trainMethod = "CD"#conrtastive divergence
         self.W           = None
+        self.turn        = 0
         self.set_params(**kwargs)
 
 
@@ -167,6 +168,7 @@ class CRFClassifier(Transformer):
         D         = y[0]
         xhat[0]   = A*numPos*numYs+B*numYs+C*numLabels+D
         i         = 0
+#        print x[0],xhat[0],A,B,C,D
         while not finished:
             i         += 1
             A         = x[i]/(numPos*numYs)
@@ -263,7 +265,7 @@ class CRFClassifier(Transformer):
     # has a higher probability
     #############################################
     def sampleY(self,x,y,W,method):
-        numLabels = len(self.idxToLabel.keys())
+        numLabels = len(self.idxToLabel.keys())+2
         l         = np.where(x>0)[0].shape[0]
         n         = 1
         finished  = False
@@ -272,13 +274,12 @@ class CRFClassifier(Transformer):
         while not finished:
             #select n rangom positions in y
             newY = copy.deepcopy(y)
-            idx = np.arange(l-1)
-            np.random.shuffle(idx)
-            idx = idx[:n]
             #flip n tags
             if method=="random":
-                labelIdx  = np.random.randint(0,numLabels,n)
-                newY[idx] = labelIdx
+                idx = np.where(y==self.turn)[0]
+                if idx.shape[0]>0:
+                    labelIdx  = np.random.randint(0,numLabels,idx.shape[0])
+                    newY[idx] = labelIdx
                 newX = self.updateX(x,newY)
                 finished = True
             elif method=="guided":
@@ -297,7 +298,7 @@ class CRFClassifier(Transformer):
                     finished = True
             #accept if y_new has higher probability
             cntr += 1
-        return newX.astype(np.int),newY.astype(np.int)
+        return newY.astype(np.int),newX.astype(np.int)
 
     def transform(self,X,**kwargs):
         self.set_params(**kwargs)
@@ -409,7 +410,6 @@ class CRFClassifier(Transformer):
             W   = 0.00001*np.random.randn(J)
         else:
             W   = self.W
-        W[0] = 10
         n,d = X.shape
         converged = False
         #shuffle input samples
@@ -421,7 +421,7 @@ class CRFClassifier(Transformer):
         X,Y=X[validation*n:,:],Y[validation*n:,:]
         n,d = X.shape
         sampleCntr = 0
-        landa = 0.01
+        landa = 1.
         #repeat until convergence
         idxNonZero = np.where(vX!=0)
         lastValidationError = 0.
@@ -454,6 +454,13 @@ class CRFClassifier(Transformer):
                     print i2
                 cnt += 1
             #update w
+#            print y
+#            print yhat
+#            print x
+#            print xhat
+#            print Fnew
+#            print FHnew
+#            print "\n"
             Wtemp = copy.deepcopy(W)
             W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
             mn,mx = -0.1,0.1
@@ -467,6 +474,7 @@ class CRFClassifier(Transformer):
                 #                Ypredicted = self.predictLabel(X,W)
                 #                pCorrect   = (Y==Ypredicted).sum()/float(Y.shape[1]*Y.shape[0])
                 #                pCorrect   = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
+                numEpochs += 1
                 Ypredicted = self.predictLabel(vX,W)
                 pCorrect   = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
                 print pCorrect
@@ -474,11 +482,9 @@ class CRFClassifier(Transformer):
                     cntEq += 1
                 else:
                     cntEq = 0
-#                if pCorrect<lastValidationError or cntEq>1:
-                if numEpochs>5 or cntEq>1:
+                if pCorrect<lastValidationError or cntEq>1 or numEpochs>5:
                     converged = True
                     W = Wtemp
-                numEpochs += 1
                 lastValidationError = pCorrect
         self.W = W
         self.printW(W,20)
