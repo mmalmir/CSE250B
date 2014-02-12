@@ -277,18 +277,9 @@ class CRFClassifier(Transformer):
             newY = copy.deepcopy(y)
             #flip n tags
             if method=="random":
-<<<<<<< HEAD
-#                idx = np.arange(l-1)
-#                np.random.shuffle(idx)
-#                idx = idx[:n]
                 idx  = np.where(y==self.turn)[0]#COLON
                 labelIdx  = np.random.randint(0,numLabels,idx.shape[0])
                 if idx.shape[0]>0:
-=======
-                idx = np.where(y==self.turn)[0]
-                if idx.shape[0]>0:
-                    labelIdx  = np.random.randint(0,numLabels,idx.shape[0])
->>>>>>> 0cf0bcd4d9e6033b8023f17a1bf616da475378b3
                     newY[idx] = labelIdx
                 newX = self.updateX(x,newY)
                 finished = True
