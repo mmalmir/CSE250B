@@ -32,6 +32,7 @@ def plotConfMat(confMat):
     fig = plt.figure(0)
     ax  = plt.gca()
     res = ax.imshow(confMat, cmap=cm.jet, interpolation='nearest')
+    ax.get_yaxis().set_tick_params(direction='out')
 #    for i, cas in enumerate(confMat):
 #        for j, c in enumerate(cas):
 #            if c>0:

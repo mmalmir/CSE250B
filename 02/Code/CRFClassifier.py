@@ -384,8 +384,13 @@ class CRFClassifier(Transformer):
 #                    W[i] = mn
             if sampleCntr%n==0:
                 numEpochs += 1
+                Ypredicted = self.predictLabel(X,W)
+                pCorrect = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
+                print "training error:",pCorrect
+                
                 Ypredicted = self.predictLabel(vX,W)
                 pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
+                print "validation error:",pCorrect
                 if pCorrect==lastValidationError:
                     cntEq += 1
                 else:
@@ -394,7 +399,6 @@ class CRFClassifier(Transformer):
                     converged = True
                     W = Wtemp
                 lastValidationError = pCorrect
-                print pCorrect
         self.W = W
         self.printW(W,20)
 
