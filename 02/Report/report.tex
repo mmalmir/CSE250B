@@ -27,7 +27,11 @@
 \author{Mohsen Malmir, Erfan Sayyari}
 \maketitle
 \section{Abstract}
+
 \section{Introduction}
+In this paper, we provide the results and details of implementation of a Conditional Random Field (CRF) model for predicting English language text punctuations. CRFs are a variant of undirected graphical models that are well suited for predicting structured labels. We train our model by maximizing the log conditional likelihood of the training data. During our experiments, we found that the model could predict individual tags by more than 94\% accuracy. However, as we performed more and more experiments, we discovered the over fitting to some prevalent tags in the training set. Using several experiments and methods that will be described later in this paper, we could overcome the over-fitting problem to some degrees.
+
+ 
 \section{Design and Analysis of Algorithm}
 \subsection{The general log-linear model}
 \subsection{Feature functions}

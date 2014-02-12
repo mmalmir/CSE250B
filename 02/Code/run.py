@@ -76,12 +76,12 @@ for i in range(1,7):
 
 
 
-#average weights
-for i in range(len(clf)):
-    for j in range(clf[0].W.shape[0]):
-        clf[0].W[j] = max(clf[0].W[j] , clf[i].W[j])
-#clf[0].W = clf[0].W / len(clf)
-clf = clf[0]
+##average weights
+#for i in range(len(clf)):
+#    for j in range(clf[0].W.shape[0]):
+##        clf[0].W[j] = max(clf[0].W[j] , clf[i].W[j])
+##clf[0].W = clf[0].W / len(clf)
+#clf = clf[0]
 
 
 idxNonZero = np.where(X_train!=0)
