@@ -1,0 +1,22 @@
+\BOOKMARK [1][-]{section.1}{Abstract}{}% 1
+\BOOKMARK [1][-]{section.2}{Introduction}{}% 2
+\BOOKMARK [1][-]{section.3}{Design and Analysis of Algorithm}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{The general log-linear model}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Feature functions}{section.3}% 5
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Part of Speech tagging}{subsection.3.2}% 6
+\BOOKMARK [2][-]{subsection.3.3}{Conditional random fields}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.4}{The Collins perceptron}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.5}{Contrastive divergence}{section.3}% 9
+\BOOKMARK [3][-]{subsubsection.3.5.1}{Gibbs sampling}{subsection.3.5}% 10
+\BOOKMARK [1][-]{section.4}{Design of Experiments}{}% 11
+\BOOKMARK [2][-]{subsection.4.1}{Initialization}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.2}{Preprocessing}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.3}{Performance Measure}{section.4}% 14
+\BOOKMARK [1][-]{section.5}{Results of Experiments}{}% 15
+\BOOKMARK [2][-]{subsection.5.1}{Collins perceptron}{section.5}% 16
+\BOOKMARK [2][-]{subsection.5.2}{Gibbs sampling}{section.5}% 17
+\BOOKMARK [1][-]{section.6}{Findings and Lessons Learned}{}% 18
+\BOOKMARK [2][-]{subsection.6.1}{Numerical Issues and Preprocessing}{section.6}% 19
+\BOOKMARK [2][-]{subsection.6.2}{Overfitting}{section.6}% 20
+\BOOKMARK [2][-]{subsection.6.3}{Model Selection}{section.6}% 21
+\BOOKMARK [2][-]{subsection.6.4}{Future works}{section.6}% 22
