@@ -52,7 +52,7 @@ class PosTagFeats(Transformer):
         if self.xNgramLen==2 and self.yNgramLen==2:
             for i in range(n):
                 X_transformed[i,0] = startX*numPos*numLabelsSq + XCopy[i,0]*numLabelsSq + startY*numLabels + YCopy[i,0]
-                for j in range(d):
+                for j in range(1,d):
                     if XCopy[i,j]==0:
                         X_transformed[i,j] = XCopy[i,j-1]*numPos*numLabelsSq + 0.*numLabelsSq+ YCopy[i,j-1]*numLabels + 0.#endY
                         break

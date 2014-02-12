@@ -18,6 +18,7 @@ class CRFClassifier(Transformer):
         self.idxToPos    = dict()
         self.trainMethod = "CD"#conrtastive divergence
         self.W           = None
+        self.turn        = 0
         self.set_params(**kwargs)
 
 
@@ -35,6 +36,8 @@ class CRFClassifier(Transformer):
                 self.trainMethod = kwargs[k]
             elif k=="sampling":
                 self.samplingMethod = kwargs[k]
+            elif k=="turn":
+                self.turn = kwargs[k]
 
 
     #for two given samples x,xhat and given weight vector W,
@@ -145,7 +148,7 @@ class CRFClassifier(Transformer):
             else:
                 D         = Y[i]
             xhat[i]   = A*numPos*numYs+B*numYs+C*numLabels+D
-        return (np.asarray(Y),xhat)
+        return (np.asarray(Y).astype(np.int),xhat.astype(np.int))
 
 
     #############################################
@@ -166,6 +169,7 @@ class CRFClassifier(Transformer):
         D         = y[0]
         xhat[0]   = A*numPos*numYs+B*numYs+C*numLabels+D
         i         = 0
+#        print x[0],xhat[0],A,B,C,D
         while not finished:
             i         += 1
             A         = x[i]/(numPos*numYs)
@@ -262,7 +266,7 @@ class CRFClassifier(Transformer):
     # has a higher probability
     #############################################
     def sampleY(self,x,y,W,method):
-        numLabels = len(self.idxToLabel.keys())
+        numLabels = len(self.idxToLabel.keys())+2
         l         = np.where(x>0)[0].shape[0]
         n         = 1
         finished  = False
@@ -273,12 +277,18 @@ class CRFClassifier(Transformer):
             newY = copy.deepcopy(y)
             #flip n tags
             if method=="random":
+<<<<<<< HEAD
 #                idx = np.arange(l-1)
 #                np.random.shuffle(idx)
 #                idx = idx[:n]
                 idx  = np.where(y==self.turn)[0]#COLON
                 labelIdx  = np.random.randint(0,numLabels,idx.shape[0])
                 if idx.shape[0]>0:
+=======
+                idx = np.where(y==self.turn)[0]
+                if idx.shape[0]>0:
+                    labelIdx  = np.random.randint(0,numLabels,idx.shape[0])
+>>>>>>> 0cf0bcd4d9e6033b8023f17a1bf616da475378b3
                     newY[idx] = labelIdx
                 newX = self.updateX(x,newY)
                 finished = True
@@ -382,19 +392,18 @@ class CRFClassifier(Transformer):
                 elif W[i] < mn:
                     W[i] = mn
             if sampleCntr%n==0:
+                numEpochs += 1
                 Ypredicted = self.predictLabel(vX,W)
                 pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
                 if pCorrect==lastValidationError:
                     cntEq += 1
                 else:
                     cntEq = 0
-#                if pCorrect<lastValidationError or cntEq>10:
-                if  numEpochs>5 or cntEq>5:
+                if  pCorrect<lastValidationError or numEpochs>5 or cntEq>5:
                     converged = True
                     W = Wtemp
                 lastValidationError = pCorrect
                 print pCorrect
-                numEpochs += 1
         self.W = W
         self.printW(W,20)
 
@@ -466,6 +475,13 @@ class CRFClassifier(Transformer):
                     print i2
                 cnt += 1
             #update w
+#            print y
+#            print yhat
+#            print x
+#            print xhat
+#            print Fnew
+#            print FHnew
+#            print "\n"
             Wtemp = copy.deepcopy(W)
             W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew) 
 #            Xs = np.arange(numPos**2).astype(np.int)*numLabels**2+16
@@ -519,4 +535,67 @@ class CRFClassifier(Transformer):
             C   = (idx-A*numPos*numYs-B*numYs)/numLabels
             D   = idx % numLabels
             print W[idx],newPosDic[A],newPosDic[B],newLblDic[C],newLblDic[D]
+
+
+    def calculateProbability(self,x,W):
+        numLabels     = len(self.idxToLabel.keys())+2
+        numYs         = numLabels ** self.yNgramLen
+        numPos        = len(self.idxToPos.keys())+2
+        numXs         = numPos ** self.xNgramLen
+        startX        = numPos-1
+        startY        = numLabels-1
+        l             = np.where(x==0)[0][0]#length of the sentence
+        xCopy         = (x[:l]).astype(np.int)
+        y             = np.ones(l-1).astype(np.int)
+        A             = xCopy / (numPos*numYs)
+        A             = A*numPos*numYs
+        B             = (xCopy-A)/numYs
+        B             = B*numYs
+        AB            = A+B
+        C             = np.zeros(l).astype(np.int)
+        C[0]          = startY
+        C[1:]         = y[:]
+        D             = np.zeros(l).astype(np.int)
+        D[-1]         = 0
+        D[:-1]        = y[:]
+        P             = np.zeros((numLabels-2)**(l-1))
+        Y             = np.zeros([(numLabels-2)**(l-1),x.shape[0]]).astype(np.int)
+        #calculate all possible tags
+        ysFinished    = False
+        i = 0
+        while not ysFinished:
+#        for i in range(l**(numLabels-2)):
+        #for each tag, calculate the feature functions
+            FF         =  AB + C*numLabels + D
+            F,Fidx     =  self.nonZeroFeatFuncs(FF,W)
+            P[i]       =  np.exp((W[Fidx]*F).sum())
+            Y[i,:l-1]  = y[:]
+            #for each tag, find the unscaled probability
+            cnt        = l-2
+            finished   = False
+            while not finished:
+                if cnt<0:
+                    ysFinished = True
+                    break
+                y[cnt]      += 1
+                C[cnt+1]    += 1
+                D[cnt]      += 1
+                if y[cnt] == numLabels-1:
+                    y[cnt]   =  1
+                    C[cnt+1]   =  1
+                    D[cnt] =  1
+                    cnt      -= 1
+                else:
+                    finished = True
+            i += 1
+        #normalize P
+        P = P/P.sum()
+        return Y,P
+        #return the scaled probability along with different tags
+
+
+
+
+
+
 

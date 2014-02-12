@@ -1,5 +1,4 @@
 import pickle
-import pprint
 import numpy as np
 from PuncData import PuncData
 from PosTagFeats import PosTagFeats
@@ -12,17 +11,11 @@ print "loading data..."
 
 l = PuncData()
 X_train,y_train,X_test,y_test = l.load()
-<<<<<<< HEAD
-n = -1
-ntest = -1
-=======
-n = 100
-ntest = 100
->>>>>>> 0cf0bcd4d9e6033b8023f17a1bf616da475378b3
+n = 1000
+ntest = 1000
 start = 0
 X_train = X_train[start:start+n,:]
 y_train = y_train[start:start+n,:]
-
 ######################
 #### feat extrac. ####
 ######################
@@ -35,7 +28,7 @@ y_train = y_train[start:start+n,:]
 #l,X_train,y_train,X_test,y_test = pickle.load(f)
 #f.close()
 
-#print l.idxToYlabel
+print l.idxToYlabel
 #
 #print l.idxToPos
 
@@ -48,81 +41,63 @@ X_train=ptf.transform(X_train,y_train)
 X_test=ptf.transform(X_test,y_test)
 
 
-print "training classifier..."
-clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
-                        x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
-<<<<<<< HEAD
-#                        train_method="CollinPerceptron",
-                        train_method="CD",
-                        sampling="random",
-=======
-                        train_method="CollinPerceptron",
->>>>>>> 0cf0bcd4d9e6033b8023f17a1bf616da475378b3
-                        )
 
-clf.turn = 2
-clf.fit(X_train,y_train)
-<<<<<<< HEAD
+############################################################
+### TRAINING CONSTRASTIVE DIVERGENCE WITH MODEL AVERAGING ##
+############################################################
+clf = []
+for i in range(1,7):
+    print "training classifier on ",l.idxToYlabel[i]
+    clf.append(CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
+                            x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
+    #                        train_method="CollinPerceptron",
+                            train_method="CD",
+                            sampling="random",
+                            turn = i,
+                            )
+               )
+    clf[-1].fit(X_train,y_train)
+    idxNonZero = np.where(X_train!=0)
 
-clf.turn = 4
-clf.fit(X_train,y_train)
+    Ypredicted = clf[-1].transform(X_train)
+    pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
 
-clf.turn = 1
-clf.fit(X_train,y_train)
-#
-clf.turn = 3
-clf.fit(X_train,y_train)
-#
-clf.turn = 6
-clf.fit(X_train,y_train)
+    print "################################################"
+    print "TRAIN STATS:"
+    print "################################################"
+    for x in l.idxToYlabel.keys():
+        idx = np.where(y_train==x)
+        pCorrect = (y_train[idx]==Ypredicted[idx]).sum()/float(Ypredicted[idx].shape[0])
+        print "for tag:",l.idxToYlabel[x]," rate is:",pCorrect, " num is:",Ypredicted[idx].shape[0]
+    pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
+    print "train rate:",pCorrect
 
-clf.turn = 5
-clf.fit(X_train,y_train)
+    print "\n"
 
 
-#clf.train_method = "CD"
-#clf.sampling="random"
-#clf.fit(X_train,y_train)
-#clf.sampling="posterior"
-#clf.fit(X_train,y_train)
-#clf.sampling="guided"
-#clf.fit(X_train,y_train)
-=======
->>>>>>> 0cf0bcd4d9e6033b8023f17a1bf616da475378b3
 
-print "calculating probabilities..."
-Y,P = clf.calculateProbability(X_train[0,:],clf.W)
-idx = np.argsort(-P)
-print Y[idx[1:10],:]
-print y_train[0,:]
-print clf.mostProbableY(X_train[0,:],clf.W)
-print -np.sort(-P)
+##average weights
+#for i in range(len(clf)):
+#    for j in range(clf[0].W.shape[0]):
+##        clf[0].W[j] = max(clf[0].W[j] , clf[i].W[j])
+##clf[0].W = clf[0].W / len(clf)
+
+
+#average weights
+for i in range(len(clf)):
+    clf[i].W =  clf[i].W / clf[i].W.sum()
+    clf[0].W += clf[i].W
+#        clf[0].W[j] = max(clf[0].W[j] , clf[i].W[j])
+#clf[0].W = clf[0].W / len(clf)
+
+
+clf = clf[0]
+
+
 idxNonZero = np.where(X_train!=0)
 
 Ypredicted = clf.transform(X_train)
 pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
-
-print l.idxToYlabel
-
-#hist = np.zeros(Ypredicted.shape[0])
-#for i in range(Ypredicted.shape[0]):
-#    idxEnd = np.where(Ypredicted[i,:]==0)[0][0]
-#    hist[i] = Ypredicted[i,idxEnd-1]
-#cnt,bins= np.histogram(hist,bins=np.arange(0,8))
-#print hist
-#print l.idxToYlabel
-#print cnt,bins
-#
-#
-#hist = np.zeros(y_train.shape[0])
-#for i in range(y_train.shape[0]):
-#    idxEnd = np.where(y_train[i,:]==0)[0][0]
-#    hist[i] = y_train[i,idxEnd-1]
-#print hist
-#cnt,bins= np.histogram(hist,bins=np.arange(0,8))
-#print l.idxToYlabel
-#print cnt,bins
-
 
 print "################################################"
 print "TRAIN STATS:"
