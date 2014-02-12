@@ -11,8 +11,8 @@ print "loading data..."
 
 l = PuncData()
 X_train,y_train,X_test,y_test = l.load()
-n = 1000
-ntest = 2000
+n = -1
+ntest = -1
 start = 0
 X_train = X_train[start:start+n,:]
 y_train = y_train[start:start+n,:]
@@ -49,17 +49,25 @@ clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
                         train_method="CD",
                         sampling="random",
                         )
-#clf.turn = 5
-#clf.fit(X_train,y_train)
 
-#clf.turn = 1
-#clf.fit(X_train,y_train)
+clf.turn = 2
+clf.fit(X_train,y_train)
+
+clf.turn = 4
+clf.fit(X_train,y_train)
+
+clf.turn = 1
+clf.fit(X_train,y_train)
 #
 clf.turn = 3
 clf.fit(X_train,y_train)
 #
-#clf.turn = 6
-#clf.fit(X_train,y_train)
+clf.turn = 6
+clf.fit(X_train,y_train)
+
+clf.turn = 5
+clf.fit(X_train,y_train)
+
 
 #clf.train_method = "CD"
 #clf.sampling="random"
