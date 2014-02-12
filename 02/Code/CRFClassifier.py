@@ -34,6 +34,8 @@ class CRFClassifier(Transformer):
                 self.trainMethod = kwargs[k]
             elif k=="sampling":
                 self.samplingMethod = kwargs[k]
+            elif k=="turn":
+                self.turn = kwargs[k]
 
 
     #for two given samples x,xhat and given weight vector W,

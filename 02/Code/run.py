@@ -11,7 +11,7 @@ print "loading data..."
 
 l = PuncData()
 X_train,y_train,X_test,y_test = l.load()
-n = -1
+n = 100
 start = 0
 X_train = X_train[start:start+n,:]
 y_train = y_train[start:start+n,:]
@@ -27,7 +27,7 @@ y_train = y_train[start:start+n,:]
 #l,X_train,y_train,X_test,y_test = pickle.load(f)
 #f.close()
 
-#print l.idxToYlabel
+print l.idxToYlabel
 #
 #print l.idxToPos
 
@@ -40,21 +40,28 @@ X_train=ptf.transform(X_train,y_train)
 X_test=ptf.transform(X_test,y_test)
 
 
-print "training classifier..."
-clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
-                        x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
-#                        train_method="CollinPerceptron",
-                        train_method="CD",
-                        sampling="posterior",
-                        )
-clf.fit(X_train,y_train)
-#clf.train_method = "CD"
-clf.sampling="random"
-clf.fit(X_train,y_train)
-#clf.sampling="posterior"
-#clf.fit(X_train,y_train)
-#clf.sampling="guided"
-#clf.fit(X_train,y_train)
+
+############################################################
+### TRAINING CONSTRASTIVE DIVERGENCE WITH MODEL AVERAGING ##
+############################################################
+clf = []
+for i in range(1,7):
+    print "training classifier on ",l.idxToYlabel[i]
+    clf.append(CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
+                            x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
+    #                        train_method="CollinPerceptron",
+                            train_method="CD",
+                            sampling="random",
+                            turn = i,
+                            )
+               )
+    clf[-1].fit(X_train,y_train)
+#average weights
+for i in range(len(1,clf)):
+    clf[0].W = clf[0].W + clf[i].W
+clf[0].W
+clf = clf[0]
+
 
 idxNonZero = np.where(X_train!=0)
 
