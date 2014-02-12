@@ -51,44 +51,12 @@ X_test=ptf.transform(X_test,y_test)
 print "training classifier..."
 clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
                         x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
-<<<<<<< HEAD
-#                        train_method="CollinPerceptron",
-                        train_method="CD",
-                        sampling="random",
-=======
                         train_method="CollinPerceptron",
->>>>>>> 0cf0bcd4d9e6033b8023f17a1bf616da475378b3
                         )
 
-clf.turn = 2
-clf.fit(X_train,y_train)
-<<<<<<< HEAD
-
-clf.turn = 4
-clf.fit(X_train,y_train)
-
-clf.turn = 1
-clf.fit(X_train,y_train)
-#
-clf.turn = 3
-clf.fit(X_train,y_train)
-#
-clf.turn = 6
-clf.fit(X_train,y_train)
-
-clf.turn = 5
 clf.fit(X_train,y_train)
 
 
-#clf.train_method = "CD"
-#clf.sampling="random"
-#clf.fit(X_train,y_train)
-#clf.sampling="posterior"
-#clf.fit(X_train,y_train)
-#clf.sampling="guided"
-#clf.fit(X_train,y_train)
-=======
->>>>>>> 0cf0bcd4d9e6033b8023f17a1bf616da475378b3
 
 print "calculating probabilities..."
 Y,P = clf.calculateProbability(X_train[0,:],clf.W)
