@@ -4,7 +4,6 @@
 \newcommand{\fracpartial}[2]{\frac{\partial #1}{\partial  #2}}
 \usepackage{hyperref}
 \usepackage{enumerate}
-\usepackage{indentfirst}
 \usepackage[top=2in, bottom=1.5in, left=0.85in, right=0.5in]{geometry}
 \usepackage[hyphenbreaks]{breakurl}
 %\usepackage[pdfstartview=FitH,pdfstartpage=13,pdfpagemode=UseNone]{hyperref}
@@ -15,150 +14,57 @@
 \usepackage{amssymb,amsmath}
 \usepackage{mdwlist }
 \usepackage{color}
-\usepackage{graphics}
 \definecolor{darkblue}{rgb}{0.0,0.0,0.5}
 \newtheorem{Dfn}{Definition}
-\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
-\geometry{letterpaper}   
-\usepackage{epstopdf}
-\epstopdfDeclareGraphicsRule{.tif}{png}{.png}{%
-convert #1 \OutputFile
-}
-\AppendGraphicsExtensions{.tif}\usepackage{epstopdf}
-\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
-
 \hypersetup{colorlinks,breaklinks,
             linkcolor=darkblue,urlcolor=darkblue,
             anchorcolor=darkblue,citecolor=darkblue}
 \newcommand{\sign}{\text{sign}}
-\setlength{\parindent}{1cm}
-
-
+\newcommand{\argmin}{\arg\!\max}
 \begin{document}
- \title{ Single Sideband Generation }
- \author{Class: Digital Signal Processing \\* \\* Erfan Sayyari \\* \\* PID: A53059770}
- \date{\today}
+
+\title{ Conditional Random Fields for Punctuation Prediction\\  Learning Algorithms, Project 2}
+\author{Mohsen Malmir, Erfan Sayyari}
 \maketitle
-\newpage
+\section{Abstract}
 
-\section{Text}
+\section{Introduction}
+In this paper, we provide the results and details of implementation of a Conditional Random Field (CRF) model for predicting English language text punctuations. CRFs are a variant of undirected graphical models that are well suited for predicting structured labels. We train our model by maximizing log conditional likelihood (LCL) of the training data. During our experiments, we found that the model could predict individual tags by more than 94\% accuracy. However, as we performed more and more experiments, we discovered the over fitting to some prevalent tags in the training set. Using several experiments and methods that will be described later in this paper, we could overcome the over-fitting problem to some degrees.\\
+We choose two techniques to train the proposed model: Collin's Perceptron and Contrastive Divergence. Both of these methods are approximations to the general gradient following method. We choose these two methods because of their two characteristics: simplicity and elegance. Both Collin's Perceptron and Contrastive Divergence provides simplified updates rule for the parameters, which are less expensive compared to the general gradient following for maximizing LCL. Despite simplicity, both methods have very clear and intuitive explanation behind them: they maximize the LCL of the data by throwing spurious samples at the model. However, as we explain our experiments in more details, we do not stick to the basic algorithms and tweak them in several ways to improve their performance.\\
+One of the most important parts of the CRF model for predicting text punctuation is the choice of feature functions as it effects both the performance and accuracy of the model. The feature functions we develop here use Part-of-Speech (POS) tags for the input sentence. The main characteristic for the proposed feature functions is their efficiency in computation time: training of our method only takes a few minutes on a single core machine. We show that using these feature functions, the model can predict the punctuation tags with high accuracy.\\ 
+For the given training and test data, danger of over-fitting is high because of the imbalanced distribution of punctuation tags. We deal with this problem with different techniques. We show how bounding the weight parameters and early stopping can improve the accuracy for the Collin's Perceptron. By introducing random sampling and guided sampling, we achieve similar improvements in Contrastive Divergence. Then we introduce the Turn-taking train procedure: for each tag we train a different predictor and then combine them using .... We show this last technique is much more effective and achieves the highest accuracy for punctuation prediction for the given data set.
 
-\subsection{Objective}
 
-In this assignment we want to implement an FIR \emph{ Hilbert Transform} filter and generate \emph{single sideband} signals. Generally, in communication whenever we want to transmit a real signal using a cosine carrier, we are wasting bandwidth. So, in order to use the bandwidth more efficiently we may use single sideband form of the signals. In order to generate single sideband form of the signals we use FIR \emph{Hilbert Transform } filter. Since the FIR \emph{ Hilbert Transform} filter is \emph{antisymmetric} and desired length of the filter is 64 (even) it is type \textrm{IV} FIR filter.
+\section{Design and Analysis of Algorithm}
+\subsection{The general log-linear model}
+\subsection{Feature functions}
+\subsubsection{Part of Speech tagging}
+\subsection{Conditional random fields}
+\subsection{The Collins perceptron}
+\subsection{Contrastive divergence}
+\subsubsection{Gibbs sampling}
+\section{Design of Experiments}
+
+To test the proposed model, we perform several experiments on the given dataset, which is an English language punctuation dataset that consists of 70115 training and 28027 test sentences. We use only training data to fit the model,  one third for validation and two thirds for training.	 After training is complete, the test data is used to assess prediction and generalization of the model. Each sentence in the training data consists of a set of words without any punctuation symbols. For multiple sentences, there was a few form of syntax complications such as use of '\$' in place of the word 'money', or words that were split to two parts by space *****. We ignored all such cases, as they were few sentences and finding a complete list of them required going through the entire dataset which was very time consuming.\\
+
+
+\subsection{Initialization}
+For Collin's Perceptron, as pointed out in the lecture, the learning rate can be fixed to $\lambda=1$. This is because scaling scaling the weight vector $w$ does not affect the predicted label by the model. Using different learning rates leads to different weight vectors that are scaled versions of each other. However, one should note that this is correct only if the model converges to the global optimum ******. For both experiments on Collin's Perceptron and Contrastive Divergence, we fix $\lambda \leftarrow 1$. \\
+For initializing the weight vector $w$, we use small random Normal numbers from $\mathcal N(0.,1e-5)$. This is because as we describe later, limiting the weight vector entries $w_j$ to be in a small range $[-a,a]$ helps to prevent over-fitting. Because both $a$ and $-a$ represents the extreme learned situation, a good option for initial weights is a random vector that is not biased for specific feature functions, that is $w_j$ better be close to 0 for all $j$.\\
+\subsection{Preprocessing}
+\subsection{Performance Measure}
+We report the performance of the models in two different ways. First, we report the prediction of individual target tags, That is, how accurate the model can predict the individual punctuations tags in corpus sentences. We report the accuracy of prediction for the entire tags as wells as individual target tags. The benefit of looking into individual punctuation tag prediction is that it reveals if over-fitting has happened due to imbalanced distribution of tags in the training data. Next, we report the accuracy of model for predicting sentence punctuation. The accuracy for this case should be lower because each sentence punctuation is composed of multiple tags. 
+\section{Results of Experiments}
+\subsection{Collins perceptron}
+For training Collin's Perceptron, we divide the training data into two thirds for train and one third for validation. The initial value for the weight vector entries $w_j$ is chosen to be small random numbers from $\mathcal{N}(0,1e-5)$. We use early stopping as a criteria for terminating the training procedure. Because Collin's Perceptron has no hyper parameters, there is a chance of over fitting to the training data. In the train procedure, we divide the data into train and validation and start training only with train data. After each epoch, we measure the accuracy for predicting individual punctuation tags on the validation data. If the accuracy has decreased, we stoop the training and roll back the weights to previous values.\\
 
 
 
-Actually, by using \emph{Hilbert Transform} we are producing a complex signal whose imaginary part is produced by utilizing the \emph{Hilbert Transform}. In order to compute this complex signal we could simply compute the FFT of the signal, and make the negative part zero. However, in this implementation we do not use this method, and we will use an FIR \emph{Hilbert Transform} filter instead.   
+\subsection{Gibbs sampling}
 
-\subsection{Introduction [1]}
-In Digital Signal Processing (DSP) \emph{Hilbert Transform} filters are used to produce a different signal from input signal which has a $ \frac{\pi}{2} $ radians phase shift. The characteristic function of an ideal \emph{Hilbert Transform} is: 
-\begin{equation*}
-H(\omega)= \left\{
- \begin{array}{rl}
-  +j & \text{if } -\pi<\omega < 0\\
-   0 & \text{if } \omega = 0, -\pi\\
-   -j & \text{if } 0<\omega<\pi
- \end{array} \right.
-\end{equation*}
-
-Although this system is not causal, we could still approximate it using FIR or IIR digital filters. Whenever we are using FIR \emph{Hilbert Transformers} we have to use suitable windowing, in order to reduce ripples and other bad side effects of hard filtering. One of the best window functions which has good frequency resolution is \emph{Hamming} window. The \emph{Min. Stopband Attenuation} of this window is -53 dB. This number shows maximum magnitude of the filter in stopband area in dB.
-
-\subsection{Approach}
-This assignment is built of 4 parts. In part A, we have to implement the block diagram which is given in Figure 11.11a in \cite{Aopen}. In order to do this, we have to implement FIR \emph{Hilbert Transform} filter first. In order to generate a 64 point FIR \emph{Hilbert Transform} filter we have used the command \emph{firpm(63, [ 0.1 0.9], [ 1 1 ], 'hilbert')} in MATLAB. The minimum frequency of the filter is come from $ 2*min{(f_1,f_2,f_3)} = 2*0.05$. The upper bound has been set symmetrically in order to have a low ripple FIR \emph{Hilbert Transform} filter. In order to generate single sideband signal, we need to generate a complex signal which is zero for $-\pi \leq \omega <0$:
-\begin{equation*}
-X(e^{j\omega})= 0,  \pi\leq\omega<0
-\end{equation*}
-Since the  \emph{Fourier} transform of the signal is not symmetric, it is not a real signal. We could write the general form of the signal as: 
-\begin{equation*}
-x[n]= x_r[n]+j*x_i[n] 
-\end{equation*}
-Where $ x_r[n]$ and $x_i[n]$ are real signals. The \emph{Fourier} transform of $x_r[n]$ and $x_i[n]$ are related to each other by the equation:
-\begin{equation*}
-X_i(e^{j\omega})= \left\{
- \begin{array}{rl}
-  -jX_r(e^{j\omega}) & \text{if } 0<\omega < \pi\\
- +jX_r(e^{j\omega}) & \text{if } -\pi\leq \omega <0 \\
- \end{array} \right.
- \end{equation*}
-  Or we could write:
-  \begin{equation*}
-  X_i(e^{j\omega})=H(e^{j\omega})X_r(e^{j\omega}),
-  \end{equation*}
-  Where:
-  
-  \begin{equation*}
-H(e^{j\omega})= \left\{
- \begin{array}{rl}
-  -j & \text{if } 0<\omega < \pi\\
- +j & \text{if } -\pi\leq \omega <0 \\
- \end{array} \right.
-\end{equation*}.
-
-Hence, in this assignment we have the real part of the signal, $x_r[n]=a_1sin(2\pi f_1n)+a_2sin(2\pi f_2n)+a_3sin(2\pi f_3n)$. Using the \emph{Hilbert Transform} (which is produced by firpm command of MATLAB), we can generate the imaginary part of the signal. The \emph{Hilbert Transform} of $a*sin(2\pi f*n)$ is $a*cos(2\pi fn)$. 
-
-We have implemented \emph{Hilbert Transform} by a 64 FIR filter. This system needs synched $x_r[n] and x_i[n]$ to work properly. The FIR \emph{Hilbert Transform} filter has a linear delay. So in order to have a synched real part of signal before multiplying by carriers, we need to have a delayed form of $x_r[n]$. In order to implement delayed form of $x_r[n]$, we will use a 64 FIR lowpass filter, which is one over the working frequency band, $max{(f_1,f_2,f_3)}$. 
-
-In this block diagram, we will multiply $x_r[n]$ by $cos(\omega_cn)$ to get $y_r[n]$, and we will multiply $x_i[n]$ by $sin(\omega_cn)$ to get $y_i[n]$. If we add $y_r[n] and y_i[n]$ we have LSB, and if we subtract $y_i[n[$ from $y_r[n]$ we will get USB. In order to show this we could consider $x_r=a*sin(2\pi fn)$. So we have:
-
- \begin{equation*}
-x_r[n]=a*sin(2\pi fn)
-\end{equation*}
- \begin{equation*}
-x_i[n]=a*cos(2\pi fn)
-\end{equation*}
-\begin{equation*}
-y_r[n]=a*sin(2\pi fn)*cos(\omega_cn)
-\end{equation*}
-
-\begin{equation*}
-y_i[n]=a*cos(2\pi fn)*sin(\omega_cn).
-\end{equation*}
-
-So for LSB we have:
- \begin{equation*}
-y[n] = y_r[n]+y_i[n]
-\end{equation*}
-or
-\begin{equation*}
-y[n]=a*sin(2\pi fn)*cos(2\omega_cn)+a*cos(2\pi fn)*sin(\omega_cn)
-\end{equation*}
-\begin{equation*}
-y[n]=a*sin((2\pi fn+\omega_cn)n).
-\end{equation*}
-
-It is obvious that we have one side of the signal. It is more clear if we look at the case where we want to transmit just $x_r=a*sin(2\pi fn)$. In this case if we multiply it by the carrier $cos(\omega_cn)$ we will have 4 delta functions. 
-
-Consequently, we can do the same procedure to get the USB:
-\begin{equation*}
-y[n] = y_r[n]-y_i[n]
-\end{equation*}
-or
-\begin{equation*}
-y[n]=a*sin(2\pi fn)*cos(2\omega_cn)-a*cos(2\pi fn)*sin(\omega_cn),
-\end{equation*}
-\begin{equation*}
-y[n]=a*sin((2\pi fn-\omega_cn)n).
-\end{equation*}
-
-Clearly, this procedure is true for arbitrary signals, since we could decompose them as the sum of some sine or cosine signals. 
-
-In part B, we have a 1024 point signal, $x_r[n]$ which is consist of three low frequency sinusoids ($f_1 = 0.05, f_2 = 0.075, and f_3 = 0.10 cycles/sample$). They have 10 dB difference in magnitude with each other.  The carrier frequency is $f_c = 0.25 cycles/sample$. And we design a 64 FIR \emph{Hilbert Transform} filter  and 64 FIR lowpass filter using \emph{firpm} as mentioned above.
-
-In part C, we have plotted the impulse response and transform function of both lowpass and \emph{Hilbert} filter.  
-
-In part D, we have plotted the magnitude (in dB) of FFTs at each stage of the system from input through output including FFTs of $x_r[n], x_rÕ[n]$  (lowpass filtered form of $x_r[n]$), $x_i(n)$, $ x_rÕ(n) cos(2\pi f_cn)$, $ x_i(n) sin(2\pi fc_n)$, and $s_r(n)$ (both USB and LSB). Also, we have plotted FFTs of $x(n) = x_rÕ(n) + j x_i(n)$ and $s(n) = x(n) exp(+j2\pi f_cn)$. To compute FFTs, NFFT = 256 and \emph{Hamming} window is used. 
- 
-\subsection{Results}
-We have described the successful generation of both upper and lower single sideband signals in previous section. 
-
-The impulse response and transfer function of \emph{Hilbert} filter are plotted in Fig 1. As it is obvious, the impulse response is antisymmetric and the magnitude of the FFT of the designed \emph{Hilbert Transform} filter is zero (dB) over the range [0.1 0.9] (cycles/samples). The phase of designed \emph{Hilbert Transform} is $\frac{-\pi}{2}$ for the $0< \omega< \pi$ and $\frac{\pi}{2}$ for the $-\pi<\omega<0$.
-
-Furthermore, the magnitude and phase of lowpass filter are plotted in Fig 2,3 and 4. As it is visible the magnitude of the lowpass filter is zero (in dB) over our working range. In contrast with impulse response of \emph{Hilbert Transform} filter, the impulse response of lowpass filter is symmetric.
-
-The FFT (dB magnitude) of $x_r[n], x_r'[n]$ and $x_i[n]$ are plotted in Figs 5 and 6. They are symmetric around 0.5, and the impulses have 10 dB differences, as the magnitude of original signals have. The magnitude of FFTs of $x_rÕ[n] cos(2\pi f_cn)$ and  $x_i(n) sin(2\pi f_cn)$ are plotted in Figs 7. This figures show that, not only they are symmetric around 0.5, they are symmetric around 0.25 as well, which is redundant. If we add them up or subtract them to get $s_r[n]$ (or y[n] for above notation) to have Fig 8, we could see that we do not have the redundant symmetry anymore. Besides, for the LSB we could see that the frequency of the signal is around $f _1'= f_1+f_c=-0.05+0.25=0.2$, $f _2'= f_2+f_c=-0.075+0.25=0.175$ and $f _3'= f_3+f_c=-0.1+0.25=0.15$. For the USB we could see that the frequency of the signal is around $f _1'= f_1-f_c=-0.05-0.25=0.3$, $f _2'= f_2-f_c=0.325$ and $f _3'= f_3-f_c=0.35$. We have plotted $x[n]=x_r'[n]+jx_i[n]$ and $s[n]=x[n]e^{j2\pi f_cn}$ in Fig 9. As it is visible they are not symmetric anymore. And for $\omega<0$, $X(e^{j\omega})$ is zero.  And it is visible that this signal is still analytical.
-\subsection{Conclusions}
-
-In this assignment we have implemented a block diagram of single sideband signal generator. In the case of transmitting a signal using a sine carrier, we will use the bandwidth more than it is necessary. By using the \emph{Hilbert Transform} we could get rid of this redundancy. \emph{Hilbert Transform} is antisymmetric. Furthermore, By using this transform we could produce an analytical form of signal. And if $f_1+f_c<0.5$ the single side band form of signal is still analytical.
-
+\section{Findings and Lessons Learned}
+\subsection{Numerical Issues and Preprocessing}
+\subsection{Overfitting}
+\subsection{Model Selection}
+\subsection{Future works}
 \end{document}
