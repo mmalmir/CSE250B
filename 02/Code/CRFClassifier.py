@@ -278,10 +278,17 @@ class CRFClassifier(Transformer):
             newY = copy.deepcopy(y)
             #flip n tags
             if method=="random":
-                idx  = np.where(y==self.turn)[0]#COLON
-                labelIdx  = np.random.randint(0,numLabels,idx.shape[0])
-                if idx.shape[0]>0:
+                if self.turn==-1:
+                    idx  = np.arange(l)
+                    np.random.shuffle(idx)
+                    idx = idx[:n]
+                    labelIdx  = np.random.randint(0,numLabels,idx.shape[0])
                     newY[idx] = labelIdx
+                else:
+                    idx  = np.where(y==self.turn)[0]#COLON
+                    labelIdx  = np.random.randint(0,numLabels,idx.shape[0])
+                    if idx.shape[0]>0:
+                        newY[idx] = labelIdx
                 newX = self.updateX(x,newY)
                 finished = True
             elif method=="guided":
@@ -346,7 +353,6 @@ class CRFClassifier(Transformer):
         vX,vY=X[:int(validation*n),:],Y[:int(validation*n),:]
         X,Y=X[int(validation*n):,:],Y[int(validation*n):,:]
         n,d = X.shape
-        idxNonZero = np.where(vX!=0)
         sampleCntr = 0
         landa = 1.
         #repeat until convergence
@@ -356,8 +362,10 @@ class CRFClassifier(Transformer):
         trainCorrect = []
         validCorrect = []
         #untrained prediction accuracy
+        idxNonZero = np.where(X!=0)
         Ypredicted = self.predictLabel(X,W)
         pCorrect1 = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
+        idxNonZero = np.where(vX!=0)
         Ypredicted = self.predictLabel(vX,W)
         pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
         trainCorrect.append(pCorrect1)
@@ -392,7 +400,7 @@ class CRFClassifier(Transformer):
             W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
             Xs = np.arange(numPos**2).astype(np.int)*numLabels**2+16
             W[Xs] = 0
-#            mn,mx = -0.1,0.1
+            mn,mx = -0.1,0.1
 #            for i in idxTotal:
 #                if W[i]>mx:
 #                    W[i] = mx
@@ -401,9 +409,12 @@ class CRFClassifier(Transformer):
             if sampleCntr%n==0:
                 numEpochs += 1
                 Ypredicted = self.predictLabel(X,W)
+                idxNonZero = np.where(X!=0)
                 pCorrect1 = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
                 print "training error:",pCorrect1
                 
+
+                idxNonZero = np.where(vX!=0)
                 Ypredicted = self.predictLabel(vX,W)
                 pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
                 print "validation error:",pCorrect
@@ -425,9 +436,16 @@ class CRFClassifier(Transformer):
         p3, = ax.plot([len(trainCorrect)-2,len(trainCorrect)-2],[0.,1.],"g-.d",label="early stopping")
         handles, labels = ax.get_legend_handles_labels()
         plt.xlabel("Epoch")
+        plt.ylabel("Punctuation Tag Prediction Accuracy")
         ax.legend(handles[::-1], labels[::-1],loc=3)
         plt.savefig("Perceptron.png",dpi=160,bbox_inches="tight",format="png")
 
+    
+        #sentence level recognition rates
+        Ypredicted = self.predictLabel(vX,W)
+        idxNonZero = np.where(vX!=0)
+        correct    = np.any(vY!=Ypredicted,axis=1)
+        print "sentence level recognition for validation set:",1.-correct.sum()/float(correct.shape[0])
     
         self.W = W
         self.printW(W,20)
@@ -459,15 +477,16 @@ class CRFClassifier(Transformer):
         sampleCntr = 0
         landa = 1.
         #repeat until convergence
-        idxNonZero = np.where(vX!=0)
         lastValidationError = 0.
         cntEq = 0
         numEpochs = 0
         trainCorrect = []
         validCorrect = []
         #untrained prediction accuracy
+        idxNonZero = np.where(X!=0)
         Ypredicted = self.predictLabel(X,W)
         pCorrect1 = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
+        idxNonZero = np.where(vX!=0)
         Ypredicted = self.predictLabel(vX,W)
         pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
         trainCorrect.append(pCorrect1)
@@ -500,10 +519,10 @@ class CRFClassifier(Transformer):
                 cnt += 1
             #update w
             Wtemp = copy.deepcopy(W)
-            W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew) 
+            W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew)
 #            Xs = np.arange(numPos**2).astype(np.int)*numLabels**2+16
 #            W[Xs] = 0
-#            mn,mx = -0.1,0.1
+            mn,mx = -0.1,0.1
 #            for i in idxTotal:
 #                if W[i]>mx:
 #                    W[i] = mx
@@ -512,10 +531,12 @@ class CRFClassifier(Transformer):
             #check for convergence
             if sampleCntr%n==0:
                 numEpochs += 1
+                idxNonZero = np.where(X!=0)
                 Ypredicted = self.predictLabel(X,W)
                 pCorrect1 = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
                 print "training error:",pCorrect1
                 
+                idxNonZero = np.where(vX!=0)
                 Ypredicted = self.predictLabel(vX,W)
                 pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
                 print "validation error:",pCorrect
@@ -538,9 +559,15 @@ class CRFClassifier(Transformer):
         p3, = ax.plot([len(trainCorrect)-2,len(trainCorrect)-2],[0.,1.],"g-.d",label="early stopping")
         handles, labels = ax.get_legend_handles_labels()
         plt.xlabel("Epoch")
+        plt.ylabel("Punctuation Tag Prediction Accuracy")
         ax.legend(handles[::-1], labels[::-1],loc=3)
         plt.savefig("CD-"+self.samplingMethod+".png",dpi=160,bbox_inches="tight",format="png")
 
+        #sentence level recognition rates
+        Ypredicted = self.predictLabel(vX,W)
+        idxNonZero = np.where(vX!=0)
+        correct    = np.any(vY!=Ypredicted,axis=1)
+        print "sentence level recognition for validation set:",1. - correct.sum()/float(correct.shape[0])
     
     
     #print the n largest elements of W

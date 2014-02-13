@@ -15,8 +15,6 @@ X_train,y_train,X_test,y_test = l.load()
 n = -1
 ntest = -1
 start = 0
-X_train = X_train[start:start+n,:]
-y_train = y_train[start:start+n,:]
 
 ######################
 #### feat extrac. ####
@@ -42,6 +40,11 @@ ptf = PosTagFeats(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,x_ngram_len
 X_train=ptf.transform(X_train,y_train)
 X_test=ptf.transform(X_test,y_test)
 
+X_train = X_train[start:start+n,:]
+y_train = y_train[start:start+n,:]
+X_test = X_test[start:start+ntest,:]
+y_test = y_test[start:start+ntest,:]
+
 
 print "training classifier..."
 clf = CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
@@ -64,6 +67,9 @@ clf.fit(X_train,y_train)
 idxNonZero = np.where(X_train!=0)
 Ypredicted = clf.transform(X_train)
 pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
+
+#sentence level recognition rates
+
 
 print l.idxToYlabel
 
@@ -89,7 +95,7 @@ conf = confMat(y_train,Ypredicted,l.idxToYlabel)
 pprint.pprint(conf)
 labels = [l.idxToYlabel[k] for k in  range(1,7)]
 print labels
-plotConfMat(conf,labels,"PerceptronConfMatTrain.png")
+plotConfMat(conf,labels,"PercConfTrain.png")
 
 print "################################################"
 print "TRAIN STATS:"
@@ -108,14 +114,15 @@ print "TEST STATS:"
 print "################################################"
 
 
-start = 0
-X_test = X_test[start:start+ntest,:]
-y_test = y_test[start:start+ntest,:]
 
 idxNonZero = np.where(X_test!=0)
 
 Ypredicted = clf.transform(X_test)
 pCorrect = (y_test[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
+
+#sentence level recognition rates
+correct    = np.any(y_test!=Ypredicted,axis=1)
+print "sentence level recognition for test set:",1. - correct.sum()/float(correct.shape[0])
 
 
 for x in l.idxToYlabel.keys():
@@ -131,7 +138,7 @@ conf = confMat(y_test,Ypredicted,l.idxToYlabel)
 pprint.pprint(conf)
 labels = [l.idxToYlabel[k] for k in  range(1,7)]
 print labels
-plotConfMat(conf,labels,"PerceptronConfMatTest.png")
+plotConfMat(conf,labels,"PercConfTest.png")
 
 
 

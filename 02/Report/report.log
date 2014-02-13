@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  13 FEB 2014 04:02
+=======
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  13 FEB 2014 03:04
+>>>>>>> ff156868d73412f6578abb5e8394e19f312532a3
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -342,13 +346,41 @@ File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 130.
 )
-\c@Dfn=\count119
-Package hyperref Info: Option `colorlinks' set `true' on input line 21.
-Package hyperref Info: Option `breaklinks' set `true' on input line 21.
+(/usr/local/texlive/2011/texmf-dist/tex/latex/multirow/multirow.sty
+\bigstrutjot=\dimen131
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count119
+\lst@gtempboxa=\box37
+\lst@token=\toks27
+\lst@length=\count120
+\lst@currlwidth=\dimen132
+\lst@column=\count121
+\lst@pos=\count122
+\lst@lostspace=\dimen133
+\lst@width=\dimen134
+\lst@newlines=\count123
+\lst@lineno=\count124
+\lst@maxwidth=\dimen135
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
+\c@lstnumber=\count125
+\lst@skipnumbers=\count126
+\lst@framebox=\box38
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2007/02/22 1.4 listings configuration
+))
+Package: listings 2007/02/22 1.4 (Carsten Heinz)
+\c@Dfn=\count127
+Package hyperref Info: Option `colorlinks' set `true' on input line 25.
+Package hyperref Info: Option `breaklinks' set `true' on input line 25.
 
 (./report.aux)
 \openout1 = `report.aux'.
 
+<<<<<<< HEAD
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
 LaTeX Font Info:    ... okay on input line 24.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
@@ -365,6 +397,24 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 24.
 LaTeX Font Info:    ... okay on input line 24.
 \AtBeginShipoutBox=\box37
 Package hyperref Info: Link coloring ON on input line 24.
+=======
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+\AtBeginShipoutBox=\box39
+Package hyperref Info: Link coloring ON on input line 28.
+>>>>>>> ff156868d73412f6578abb5e8394e19f312532a3
 
 (/usr/local/texlive/2011/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
@@ -372,11 +422,11 @@ Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
 (/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count120
+\c@section@level=\count128
 )
-LaTeX Info: Redefining \ref on input line 24.
-LaTeX Info: Redefining \pageref on input line 24.
-LaTeX Info: Redefining \nameref on input line 24.
+LaTeX Info: Redefining \ref on input line 28.
+LaTeX Info: Redefining \pageref on input line 28.
+LaTeX Info: Redefining \nameref on input line 28.
 
 (./report.out) (./report.out)
 \@outlinefile=\write3
@@ -419,6 +469,7 @@ LaTeX Info: Redefining \nameref on input line 24.
 
 (/usr/local/texlive/2011/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
+<<<<<<< HEAD
 \scratchcounter=\count121
 \scratchdimen=\dimen131
 \scratchbox=\box38
@@ -430,6 +481,19 @@ LaTeX Info: Redefining \nameref on input line 24.
 \MPnumerator=\count125
 \makeMPintoPDFobject=\count126
 \everyMPtoPDFconversion=\toks28
+=======
+\scratchcounter=\count129
+\scratchdimen=\dimen136
+\scratchbox=\box40
+\nofMPsegments=\count130
+\nofMParguments=\count131
+\everyMPshowfont=\toks28
+\MPscratchCnt=\count132
+\MPscratchDim=\dimen137
+\MPnumerator=\count133
+\makeMPintoPDFobject=\count134
+\everyMPtoPDFconversion=\toks29
+>>>>>>> ff156868d73412f6578abb5e8394e19f312532a3
 ) (/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
 
@@ -445,18 +509,24 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-LaTeX Font Info:    Try loading font information for U+msa on input line 29.
+\c@lstlisting=\count135
+LaTeX Font Info:    Try loading font information for U+msa on input line 33.
 
 (/usr/local/texlive/2011/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 29.
+LaTeX Font Info:    Try loading font information for U+msb on input line 33.
 
 (/usr/local/texlive/2011/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 ) [1
 
+<<<<<<< HEAD
 {/usr/local/texlive/2011/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+=======
+{/usr/local/texlive/2011/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+Underfull \hbox (badness 10000) in paragraph at lines 52--53
+>>>>>>> ff156868d73412f6578abb5e8394e19f312532a3
 
 LaTeX Warning: Reference `cite:1' on page 3 undefined on input line 73.
 
@@ -465,6 +535,7 @@ Overfull \hbox (37.48976pt too wide) in paragraph at lines 128--148
  [] 
  []
 
+<<<<<<< HEAD
 Missing character: There is no Þ in font cmr12!
 [4] [5pdfTeX warning (ext4): destination with the same identifier (name{table.1
 }) has been already used, duplicate ignored
@@ -480,6 +551,10 @@ le.2}) has been already used, duplicate ignored
 l.190 \begin{align}
                    ] [7] [8]
 Underfull \hbox (badness 10000) in paragraph at lines 254--255
+=======
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 56--58
+>>>>>>> ff156868d73412f6578abb5e8394e19f312532a3
 
  []
 
@@ -488,6 +563,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 268--270
 
  []
 
+<<<<<<< HEAD
 [10]
 Underfull \hbox (badness 10000) in paragraph at lines 275--276
 
@@ -498,6 +574,112 @@ Package atveryend Info: Empty hook `BeforeClearDocument' on input line 288.
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 288.
  (./report.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 288.
+=======
+Underfull \hbox (badness 10000) in paragraph at lines 63--65
+
+ []
+
+[3] <./figs/Perceptron/Perceptron.png, id=117, 509.5035pt x 399.74344pt>
+File: ./figs/Perceptron/Perceptron.png Graphic file (type png)
+
+<use ./figs/Perceptron/Perceptron.png>
+Package pdftex.def Info: ./figs/Perceptron/Perceptron.png used on input line 68
+.
+(pdftex.def)             Requested size: 361.70947pt x 283.78322pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [4pdfTeX warning (ext4): destination with the same identifier (name{figure.1})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.85 
+      <./figs/Perceptron/Perceptron.png>]
+<./figs/figPerceptronConfMat.png, id=132, 911.95706pt x 420.97275pt>
+File: ./figs/figPerceptronConfMat.png Graphic file (type png)
+
+<use ./figs/figPerceptronConfMat.png>
+Package pdftex.def Info: ./figs/figPerceptronConfMat.png used on input line 109
+.
+(pdftex.def)             Requested size: 516.73007pt x 238.53093pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [5pdfTeX warning (ext4): destination with the same identifier (name{table.1}) 
+has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.113 
+      pdfTeX warning (ext4): destination with the same identifier (name{table.2
+}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.113 
+      ]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [6pdfTeX warning (ext4): destination with the same identifier (name{figure.2})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.145 
+       <./figs/figPerceptronConfMat.png>] [7pdfTeX warning (ext4): destination 
+with the same identifier (name{table.3}) has been already used, duplicate ignor
+ed
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.151 
+      ] <./figs/Gibbs/CD.png, id=162, 509.5035pt x 399.74344pt>
+File: ./figs/Gibbs/CD.png Graphic file (type png)
+
+<use ./figs/Gibbs/CD.png>
+Package pdftex.def Info: ./figs/Gibbs/CD.png used on input line 154.
+(pdftex.def)             Requested size: 516.73007pt x 405.40895pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [8]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9pdfTeX warning (ext4): destination with the same identifier (name{figure.3})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.172 
+       <./figs/Gibbs/CD.png>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [10pdfTeX warning (ext4): destination with the same identifier (name{table.4})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.222 
+      pdfTeX warning (ext4): destination with the same identifier (name{table.5
+}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.222 
+      ]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 230.
+ [11pdfTeX warning (ext4): destination with the same identifier (name{table.6})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.230 \end{document}
+                    ]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 230.
+ (./report.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 230.
+>>>>>>> ff156868d73412f6578abb5e8394e19f312532a3
 
 
  *File List*
@@ -561,6 +743,13 @@ algorithm2e.sty    2008/00/00 v3.10 algorithms environments
  mdwlist.sty    1996/05/02 1.1 Various list-related things
    color.sty    2005/11/14 v1.0j Standard LaTeX Color (DPC)
    color.cfg    2007/01/18 v1.5 color configuration of teTeX/TeXLive
+<<<<<<< HEAD
+=======
+multirow.sty    
+listings.sty    2007/02/22 1.4 (Carsten Heinz)
+ lstmisc.sty    2007/02/22 1.4 (Carsten Heinz)
+listings.cfg    2007/02/22 1.4 listings configuration
+>>>>>>> ff156868d73412f6578abb5e8394e19f312532a3
  nameref.sty    2010/04/30 v2.40 Cross-referencing by name of section
 gettitlestring.sty    2010/12/03 v1.4 Cleanup title references (HO)
   report.out
@@ -571,6 +760,7 @@ epstopdf-base.sty    2010/02/09 v2.5 Base part for package epstopdf
 epstopdf-sys.cfg    2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
     umsa.fd    2009/06/22 v3.00 AMS symbols A
     umsb.fd    2009/06/22 v3.00 AMS symbols B
+<<<<<<< HEAD
  ***********
 
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 288.
@@ -610,4 +800,43 @@ PDF statistics:
  245 compressed objects within 3 object streams
  71 named destinations out of 1000 (max. 500000)
  217 words of extra memory for PDF output out of 10000 (max. 10000000)
+=======
+./figs/Perceptron/Perceptron.png
+./figs/figPerceptronConfMat.png
+./figs/Gibbs/CD.png
+ ***********
+
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 230.
+Package rerunfilecheck Info: File `report.out' has not changed.
+(rerunfilecheck)             Checksum: F998DE7A8DA31613EB33101DD45BDC2B;1547.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 230.
+ ) 
+Here is how much of TeX's memory you used:
+ 9034 strings out of 493633
+ 129229 string characters out of 3143378
+ 251792 words of memory out of 3000000
+ 12183 multiletter control sequences out of 15000+200000
+ 13703 words of font info for 53 fonts, out of 3000000 for 9000
+ 831 hyphenation exceptions out of 8191
+ 31i,10n,35p,1265b,324s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
+></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
+</usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
+/usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></
+usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></us
+r/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/
+local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/lo
+cal/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/loca
+l/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/
+texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/tex
+live/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texl
+ive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texliv
+e/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on report.pdf (11 pages, 391997 bytes).
+PDF statistics:
+ 241 PDF objects out of 1000 (max. 8388607)
+ 206 compressed objects within 3 object streams
+ 44 named destinations out of 1000 (max. 500000)
+ 200 words of extra memory for PDF output out of 10000 (max. 10000000)
+>>>>>>> ff156868d73412f6578abb5e8394e19f312532a3
 

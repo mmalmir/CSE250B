@@ -1,0 +1,76 @@
+racting features...
+training error: 0.837660598502
+validation error: 0.837933556916
+training error: 0.865574956627
+validation error: 0.865502920026
+training error: 0.848803556153
+validation error: 0.848698279963
+0.1 WRB IN SPACE SPACE
+0.1 NN UH SPACE COLON
+0.1 NN UH SPACE PERIOD
+0.1 ADJ WH SPACE SPACE
+0.1 PRP ADJ COMMA SPACE
+0.1 PRP ADJ SPACE QUESTION_MARK
+0.1 PRP ADJ SPACE SPACE
+0.1 IN VB SPACE SPACE
+0.1 VB IN SPACE SPACE
+0.1 VB IN SPACE PERIOD
+0.1 VB IN SPACE COMMA
+0.1 IN VB SPACE QUESTION_MARK
+0.1 IN VB SPACE PERIOD
+0.1 NN SYM COMMA SPACE
+0.1 CC CD SPACE PERIOD
+0.1 CC CD SPACE SPACE
+0.1 PRP CD SPACE PERIOD
+0.1 PRP CD SPACE QUESTION_MARK
+0.1 PRP EX SPACE QUESTION_MARK
+0.1 PRP EX SPACE PERIOD
+sentence level recognition for validation set: 0.113473963459
+array([[  4.86560187e-01,   0.00000000e+00,   2.96844566e-01,
+          2.16205688e-01,   0.00000000e+00,   0.00000000e+00],
+       [  2.65654387e-03,   9.45407248e-01,   2.94788450e-04,
+          3.69950886e-03,   1.42981018e-02,   2.43002222e-02],
+       [  5.43011739e-01,   0.00000000e+00,   2.48899486e-01,
+          2.07997065e-01,   0.00000000e+00,   0.00000000e+00],
+       [  5.63317557e-01,   7.73677500e-03,   2.20925968e-01,
+          2.04963412e-01,   3.49290068e-04,   1.67659233e-03],
+       [  0.00000000e+00,   4.05351833e-01,   0.00000000e+00,
+          9.91080278e-04,   3.00297324e-01,   2.91377602e-01],
+       [  5.95342322e-04,   8.12852390e-01,   2.45140956e-04,
+          1.99614778e-03,   9.46594292e-02,   8.57993346e-02]])
+['EXCLAMATION_POINT', 'SPACE', 'QUESTION_MARK', 'PERIOD', 'COLON', 'COMMA']
+################################################
+TRAIN STATS:
+################################################
+for tag: EXCLAMATION_POINT  rate is: 0.486560186989  num is: 2567
+for tag: SPACE  rate is: 0.945407247659  num is: 580077
+for tag: QUESTION_MARK  rate is: 0.248899486427  num is: 10904
+for tag: PERIOD  rate is: 0.204963411865  num is: 57259
+for tag: COLON  rate is: 0.300297324083  num is: 1009
+for tag: COMMA  rate is: 0.0857993346174  num is: 28555
+train rate: 0.848751140929
+################################################
+TEST STATS:
+################################################
+sentence level recognition for test set: 0.115464211803
+for tag: EXCLAMATION_POINT  rate is: 0.517823639775  num is: 1066
+for tag: SPACE  rate is: 0.947069662387  num is: 235536
+for tag: QUESTION_MARK  rate is: 0.246661101836  num is: 4792
+for tag: PERIOD  rate is: 0.20420593989  num is: 22492
+for tag: COLON  rate is: 0.500851788756  num is: 1174
+for tag: COMMA  rate is: 0.0763244256915  num is: 10665
+test rate: 0.852092668008
+array([[  5.17823640e-01,   0.00000000e+00,   2.81425891e-01,
+          2.00750469e-01,   0.00000000e+00,   0.00000000e+00],
+       [  2.51766184e-03,   9.47069662e-01,   3.56633381e-04,
+          3.46868419e-03,   1.35223490e-02,   2.40939814e-02],
+       [  5.46118531e-01,   0.00000000e+00,   2.46661102e-01,
+          2.07220367e-01,   0.00000000e+00,   0.00000000e+00],
+       [  5.60465943e-01,   1.11595234e-02,   2.21011915e-01,
+          2.04205940e-01,   4.44602525e-04,   1.95625111e-03],
+       [  0.00000000e+00,   2.03577513e-01,   0.00000000e+00,
+          8.51788756e-04,   5.00851789e-01,   2.91311755e-01],
+       [  5.62587904e-04,   8.34411627e-01,   1.87529301e-04,
+          2.71917487e-03,   8.17627754e-02,   7.63244257e-02]])
+['EXCLAMATION_POINT', 'SPACE', 'QUESTION_MARK', 'PERIOD', 'COLON', 'COMMA']
+
