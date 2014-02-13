@@ -31,7 +31,7 @@
 \author{Mohsen Malmir, Erfan Sayyari}
 \maketitle
 \section{Abstract}
-We describe the details of implementing  a Conditional Random Fields model for prediction punctuation tags for English language text . Gibbs sampling and Collin's Perceptron methods are used to train the model by maximizing the log-conditional likelihood of the data. We propose a set of feature functions that are based on part of speech tags of the input sentences. We show that using with feature functions, training of the model is very fast and memory efficient. The proposed model can predict the individual punctuation tags with 91\% accuracy. We also look closely into the problem of over fitting, which occurs because of the imbalance of target tag frequency in the training data. A model averaging technique is proposed that can alleviate this problem. 
+We describe the details of implementing  a Conditional Random Fields model for prediction punctuation tags for English language text . Three different techniques are used for training the model: Gibbs sampling, Collin's Perceptron andmethods are used to train the model by maximizing the log-conditional likelihood of the data. We propose a set of feature functions that are based on part of speech tags of the input sentences. We show that using with feature functions, training of the model is very fast and memory efficient. The proposed model can predict the individual punctuation tags with 91\% accuracy. We also look closely into the problem of over fitting, which occurs because of the imbalance of target tag frequency in the training data. A model averaging technique is proposed that can alleviate this problem. 
 
 \section{Introduction}
 In this paper, we provide the results and details of implementation of a Conditional Random Field (CRF) model for predicting English language text punctuations. CRFs are a variant of undirected graphical models that are well suited for predicting structured labels. We train our model by maximizing log conditional likelihood (LCL) of the training data. During our experiments, we found that the model could predict individual tags by more than 94\% accuracy. However, as we performed more and more experiments, we discovered the over fitting to some prevalent tags in the training set. Using several experiments and methods that will be described later in this paper, we could overcome the over-fitting problem to some degrees.\\
@@ -474,5 +474,8 @@ We train 6 models for 6 target tags we have in the data. on 4 models, the predic
 \subsection{Comparison Between Different Models}
 
 \section{Conclusion}
+\section{References}
+url = "https://pypi.python.org/pypi/topia.termextract/"
+
 
 \end{document}
