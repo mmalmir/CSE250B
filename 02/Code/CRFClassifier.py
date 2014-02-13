@@ -523,11 +523,11 @@ class CRFClassifier(Transformer):
 #            Xs = np.arange(numPos**2).astype(np.int)*numLabels**2+16
 #            W[Xs] = 0
             mn,mx = -0.1,0.1
-#            for i in idxTotal:
-#                if W[i]>mx:
-#                    W[i] = mx
-#                elif W[i] < mn:
-#                    W[i] = mn
+            for i in idxTotal:
+                if W[i]>mx:
+                    W[i] = mx
+                elif W[i] < mn:
+                    W[i] = mn
             #check for convergence
             if sampleCntr%n==0:
                 numEpochs += 1

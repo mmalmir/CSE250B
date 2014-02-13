@@ -31,6 +31,7 @@
 \author{Mohsen Malmir, Erfan Sayyari}
 \maketitle
 \section{Abstract}
+We describe the details of implementing  a Conditional Random Fields model for prediction punctuation tags for English language text . Gibbs sampling and Collin's Perceptron methods are used to train the model by maximizing the log-conditional likelihood of the data. We propose a set of feature functions that are based on part of speech tags of the input sentences. We show that using with feature functions, training of the model is very fast and memory efficient. The proposed model can predict the individual punctuation tags with 91\% accuracy. We also look closely into the problem of over fitting, which occurs because of the imbalance of target tag frequency in the training data. A model averaging technique is proposed that can alleviate this problem. 
 
 \section{Introduction}
 In this paper, we provide the results and details of implementation of a Conditional Random Field (CRF) model for predicting English language text punctuations. CRFs are a variant of undirected graphical models that are well suited for predicting structured labels. We train our model by maximizing log conditional likelihood (LCL) of the training data. During our experiments, we found that the model could predict individual tags by more than 94\% accuracy. However, as we performed more and more experiments, we discovered the over fitting to some prevalent tags in the training set. Using several experiments and methods that will be described later in this paper, we could overcome the over-fitting problem to some degrees.\\
@@ -147,7 +148,9 @@ In order to further assess the correctness of the model, we look into the accura
 For Contrastive Divergence, the training setup is the same as mentioned in previous section. The training data is divided into training and validation sets, and early stopping is applied to terminate the training. The initial value for the weight vector entries are chosen randomly from $\mathcal{N}(0,1e-5)$. 
 \subsubsection{Training with Bounded Weights}
 As we saw in Collin's Perceptron, the weight vector entries grow unbounded for tags that are more frequent in the training data. This unbounded growth can cause problems during prediction, because the large weights tend to bias the decision in favor of more frequent tags (e.g. SPACE or PERIOD). One way to deal with this situation is to use a separate learning rate for each entry in the weight vector. Then if a $w_j$ has been updated frequently, we can decrease its learning rate. A  similar approach is to force the $w_j$s to be in a specified range $[-a,a]$. For each update, one then should check that $w_j$ doesn't exceed this bound. We adapt this technique in training of Contrastive Divergence model, with hope that this reduces over-fitting to specific punctuation tags.\\
-Figure \ref{figCDEarlyStopping} shows that early stopping terminates the training for Contrastive Divergence after two epochs. Tables \ref{tablePredGibbs} and \ref{tableIndividualTagsGibbs} show the performance for this model. These results are very interesting as we compare it row by row to table \ref{tableIndividualTagsPerceptron}. We see that the tag EXCLAMATION\_POINT, QUESTION\_MARK and COLON are learned more and accuracy of their prediction has  increased in Contrastive Divergence compared to Collin's Perceptron. Specifically this is interesting because these are the lowest frequency symbols in the training dataset. However, this learning occurred at the expense of \emph{unlearning} COMMA and PERIOD, which lead to decreased overall prediction accuracy both on sentence level and individual tag level prediction.  Table \ref{tableGibbsWeights} displays some of the weights learned by Contrastive Divergence. (*****DESC FOR FFs)
+Figure \ref{figCDEarlyStopping} shows that early stopping terminates the training for Contrastive Divergence after two epochs. Tables \ref{tablePredGibbs} and \ref{tableIndividualTagsGibbs} show the performance for this model. These results are very interesting as we compare it row by row to table \ref{tableIndividualTagsPerceptron}. We see that the tag EXCLAMATION\_POINT, QUESTION\_MARK and COLON are learned more and accuracy of their prediction has  increased in Contrastive Divergence compared to Collin's Perceptron. Specifically this is interesting because these are the lowest frequency symbols in the training dataset. However, this learning occurred at the expense of \emph{unlearning} COMMA and PERIOD, which lead to decreased overall prediction accuracy both on sentence level and individual tag level prediction.  As we can see in the confusion matrix in figure \ref{figCDConf}, this model is predicting EXCLAMATION\_POINT for QUESTION\_MARK and PERIOD. This means indicates an inherent limitation in the feature functions reused, that is to use only consecutive POS tags of the input sentence. The model cannot differentiate between these three target tags, as seen in the EXCLAMATION\_POINT columns in figure \ref{figCDConf}. \\
+
+Table \ref{tableGibbsWeights} displays some of the weights learned by Contrastive Divergence. (*****DESC FOR FFs)
 
 \begin{figure}[H]
 \centering
@@ -172,7 +175,7 @@ Figure \ref{figCDEarlyStopping} shows that early stopping terminates the trainin
 
 
 \begin{table}[H]\footnotesize
-  \caption{Accuracy of predicting different tags by Collin's Perceptron}
+  \caption{Accuracy of predicting different tags by Contrastive Divergence}
 \begin{center}
     \begin{tabular}{| c | c | c | c | c |}
     \hline
@@ -220,11 +223,38 @@ Figure \ref{figCDEarlyStopping} shows that early stopping terminates the trainin
 \end{center}
 \end{table}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.\textwidth]{./figs/figGibbsConfMat.png}
+\caption{Confusion matrix for individual tag prediction for Contrastive Divergence for Left: validation and Right: Test data.}
+\label{figCDConf}
+\end{figure}
 
+\subsection{Model Averaging}
+In previous section, we saw that both models (Collin's Perceptron and Contrastive Divergence) cannot distinguish between different punctuation tags at the end of sentence.  One reason for this is that the feature functions we picked look only locally to POS and punctuation tags. When this happens, the model tends to favor one specific tag at the end of sentences during training and prediction. One way to overcome the limitations of the feature functions is to train different models on the data and then combine their results. The basic idea is as follows: train different models that predict only a specific punctuation tag. Then combine these models using model averaging. By using different models for different punctuation tags, the effect of imbalanced frequency of target tags is alleviated. However, combining different models is not trivial as they are trained on different aspects of the training data.\\
+One easy way to combine different models is to average their weights and use that for prediction. This makes sense only in the case of bounded weights, where in training, weight components $w_j$ are limited to a specified range $[-a,a]$. We pick this range to be the same for different models, and train a model for predicting each of the punctuation tags separately. We use a variant of Contrastive Divergence method mainly because of simplicity of implementation. We believe that the choice of base model is not too important for this case. The training procedure for target tag $z$ is as follows: pick the next training sample, change its punctuation tags only in places where the tag is $z$. The change is random and can be any target tag, including $z$ itself. Then calculate the corresponding feature functions and update the weights. Early stopping is used in training each model. Then we average the weight vector of these models and use that for prediction.\\
+We train 6 models for 6 target tags we have in the data. on 4 models, the prediction accuracy on validation set is more than 99\%. On COMMA and COLON, however the prediction accuracy is much lower, around 51\% for COMMA and 69\% for COLON. Table \ref{tableCombinedModels} shows the prediction accuracy of the model with averaged weights on validation and test sets. For individual tag prediction, the averaged model achieved 83\% for both validation and test sets.
 
-\section{Findings and Lessons Learned}
-\subsection{Numerical Issues and Preprocessing}
-\subsection{Overfitting}
-\subsection{Model Selection}
-\subsection{Future works}
+\begin{table}[H]\footnotesize
+  \caption{Accuracy of predicting target tags by averaged model}
+\begin{center}
+    \begin{tabular}{| c | c | c | c | c |}
+    \hline
+    \textbf{ Method} & \multicolumn{2}{ c| }{\textbf{Validation set}}  & \multicolumn{2}{ c| }{\textbf{Test set}} \\ \hline
+     & Accuracy & Frequency & Accuracy & Frequency \\ \hline
+    EXCLAMATION\_POINT & 0.161 & 2567 & 0.138 & 1066  \\ \hline
+    SPACE & 0.865 & 580077  & 0.866 & 235536\\ \hline
+    QUESTION\_MARK & 0.149 & 10904 & 0.151 & 4792 \\ \hline
+    PERIOD & 0.765 & 57259  & 0.762 & 22492\\ \hline
+    COLON & 0.667 & 1009  & 0.859 & 1174\\ \hline
+    COMMA & 0.182 & 28555  & 0.205 & 10665\\ \hline
+    \end{tabular}
+    \label{tableCombinedModels}
+\end{center}
+\end{table}
+
+\subsection{Comparison Between Different Models}
+
+\section{Conclusion}
+
 \end{document}
