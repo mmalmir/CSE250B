@@ -266,7 +266,7 @@ idx = idx_{POS_2}*(number of labels)^2(number of POS tags)\\
 +idx_{POS_1}*(number of labels)^2+idx_{label_2}*(number of labels)+idx_{label_1}.
 \end{align}
 
-The other important thing about our feature functions is that, we increase the length of sentences to become the same, equal to $d$. In shorter sentence after the $STOP$ we have -1, for $STOP$ we assign zero and to $START$ we assign $d+1$ ($d$ is the maximum length of sentence in training data).
+The other important thing about our feature functions is that, we increase the length of sentences to become the same, equal to $d$. In shorter sentence after the $STOP$ we have 0, for $STOP$ we assign zero and to $START$ we assign $d+1$ ($d$ is the maximum length of sentence in training data).
 
 \subsection{Initialization}
 For Collin's Perceptron, as pointed out in the lecture, the learning rate can be fixed to $\lambda=1$. This is because scaling scaling the weight vector $w$ does not affect the predicted label by the model. Using different learning rates leads to different weight vectors that are scaled versions of each other. However, one should note that this is correct only if the model converges to the global optimum ******. For both experiments on Collin's Perceptron and Contrastive Divergence, we fix $\lambda \leftarrow 1$. \\
