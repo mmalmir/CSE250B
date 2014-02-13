@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  13 FEB 2014 12:44
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  13 FEB 2014 12:46
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -373,7 +373,7 @@ Package: listings 2007/02/22 1.4 (Carsten Heinz)
 Package hyperref Info: Option `colorlinks' set `true' on input line 25.
 Package hyperref Info: Option `breaklinks' set `true' on input line 25.
 
-No file report.aux.
+(./report.aux)
 \openout1 = `report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 28.
@@ -392,6 +392,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 28.
 LaTeX Font Info:    ... okay on input line 28.
 \AtBeginShipoutBox=\box40
 Package hyperref Info: Link coloring ON on input line 28.
+
 (/usr/local/texlive/2013/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 
@@ -403,6 +404,8 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 28.
 LaTeX Info: Redefining \pageref on input line 28.
 LaTeX Info: Redefining \nameref on input line 28.
+
+(./report.out) (./report.out)
 \@outlinefile=\write3
 \openout3 = `report.out'.
 
@@ -485,20 +488,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 LaTeX Warning: Reference `cite:1' on page 3 undefined on input line 78.
 
-
-LaTeX Warning: Reference `table:1' on page 3 undefined on input line 78.
-
-
-LaTeX Warning: Reference `table:1' on page 3 undefined on input line 78.
-
 [3]
-
-LaTeX Warning: Reference `table:1' on page 4 undefined on input line 82.
-
-
-LaTeX Warning: Reference `table:2' on page 4 undefined on input line 82.
-
-
 Overfull \hbox (37.48976pt too wide) in paragraph at lines 133--153
  [] 
  []
@@ -527,53 +517,19 @@ Underfull \hbox (badness 10000) in paragraph at lines 273--275
  []
 
 [10]
-
-LaTeX Warning: Reference `figEarlyStoppingPercGibbs' on page 11 undefined on in
-put line 281.
-
-
-LaTeX Warning: Reference `tablePredPerceptron' on page 11 undefined on input li
-ne 281.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 280--282
 
  []
 
-<./figs/Perceptron/Perceptron.png, id=109, 509.5035pt x 399.74344pt>
+<./figs/Perceptron/Perceptron.png, id=200, 509.5035pt x 399.74344pt>
 File: ./figs/Perceptron/Perceptron.png Graphic file (type png)
 
 <use ./figs/Perceptron/Perceptron.png>
 Package pdftex.def Info: ./figs/Perceptron/Perceptron.png used on input line 28
 5.
 (pdftex.def)             Requested size: 361.70947pt x 283.78322pt.
- [11]
-
-LaTeX Warning: Reference `tableIndividualTagsPerceptron' on page 12 undefined o
-n input line 304.
-
-
-LaTeX Warning: Reference `figPerceptronConfMat' on page 12 undefined on input l
-ine 304.
-
-
-LaTeX Warning: Reference `tableIndividualTagsPerceptron' on page 12 undefined o
-n input line 304.
-
-
-LaTeX Warning: Reference `figPerceptronConfMat' on page 12 undefined on input l
-ine 304.
-
-
-LaTeX Warning: Reference `figPerceptronConfMat' on page 12 undefined on input l
-ine 304.
-
-
-LaTeX Warning: Reference `tablePerceptronWeights' on page 12 undefined on input
- line 304.
-
-[12pdfTeX warning (ext4): destination with the same identifier (name{figure.1})
- has been already used, duplicate ignored
+ [11] [12pdfTeX warning (ext4): destination with the same identifier (name{figu
+re.1}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
@@ -585,7 +541,7 @@ l.305
                                                   \fi \fi 
 l.305 
        <./figs/Perceptron/Perceptron.png>]
-<./figs/figPerceptronConfMat.png, id=128, 911.95706pt x 420.97275pt>
+<./figs/figPerceptronConfMat.png, id=223, 911.95706pt x 420.97275pt>
 File: ./figs/figPerceptronConfMat.png Graphic file (type png)
 
 <use ./figs/figPerceptronConfMat.png>
@@ -610,70 +566,18 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
 l.364 
-       <./figs/figPerceptronConfMat.png>]
-
-LaTeX Warning: Reference `figCDEarlyStopping' on page 15 undefined on input lin
-e 370.
-
-
-LaTeX Warning: Reference `tablePredGibbs' on page 15 undefined on input line 37
-0.
-
-
-LaTeX Warning: Reference `tableIndividualTagsGibbs' on page 15 undefined on inp
-ut line 370.
-
-
-LaTeX Warning: Reference `tableIndividualTagsPerceptron' on page 15 undefined o
-n input line 370.
-
-
-LaTeX Warning: Reference `figCDConf' on page 15 undefined on input line 370.
-
-
-LaTeX Warning: Reference `figCDConf' on page 15 undefined on input line 370.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 368--371
-
- []
-
-[15pdfTeX warning (ext4): destination with the same identifier (name{table.5}) 
-has been already used, duplicate ignored
+       <./figs/figPerceptronConfMat.png>] [15pdfTeX warning (ext4): destination
+ with the same identifier (name{table.5}) has been already used, duplicate igno
+red
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.371 
-      ]
-
-LaTeX Warning: Reference `tableGibbsWeights' on page 16 undefined on input line
- 372.
-
-
-LaTeX Warning: Reference `figCDEarlyStopping' on page 16 undefined on input lin
-e 374.
-
-
-LaTeX Warning: Reference `tablePredGibbs' on page 16 undefined on input line 37
-4.
-
-
-LaTeX Warning: Reference `tableIndividualTagsGibbs' on page 16 undefined on inp
-ut line 374.
-
-
-LaTeX Warning: Reference `tableIndividualTagsPerceptron' on page 16 undefined o
-n input line 374.
-
-
-LaTeX Warning: Reference `tableGibbsWeights' on page 16 undefined on input line
- 374.
-
-<./figs/Gibbs/CD.png, id=153, 509.5035pt x 399.74344pt>
+l.370 
+      ] <./figs/Gibbs/CD.png, id=248, 509.5035pt x 399.74344pt>
 File: ./figs/Gibbs/CD.png Graphic file (type png)
 
 <use ./figs/Gibbs/CD.png>
-Package pdftex.def Info: ./figs/Gibbs/CD.png used on input line 381.
+Package pdftex.def Info: ./figs/Gibbs/CD.png used on input line 375.
 (pdftex.def)             Requested size: 516.73007pt x 405.40895pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -686,7 +590,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.399 
+l.393 
        <./figs/Gibbs/CD.png>]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
@@ -695,18 +599,18 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.449 
+l.443 
       pdfTeX warning (ext4): destination with the same identifier (name{table.7
 }) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.449 
-      ] <./figs/figGibbsConfMat.png, id=170, 884.85582pt x 425.48962pt>
+l.443 
+      ] <./figs/figGibbsConfMat.png, id=266, 884.85582pt x 425.48962pt>
 File: ./figs/figGibbsConfMat.png Graphic file (type png)
 
 <use ./figs/figGibbsConfMat.png>
-Package pdftex.def Info: ./figs/figGibbsConfMat.png used on input line 452.
+Package pdftex.def Info: ./figs/figGibbsConfMat.png used on input line 446.
 (pdftex.def)             Requested size: 516.73007pt x 248.47868pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -716,30 +620,25 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.456 
-      ]
-
-LaTeX Warning: Reference `tableCombinedModels' on page 20 undefined on input li
-ne 460.
-
-[20pdfTeX warning (ext4): destination with the same identifier (name{figure.4})
- has been already used, duplicate ignored
+l.450 
+      ] [20pdfTeX warning (ext4): destination with the same identifier (name{fi
+gure.4}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.461 
+l.455 
        <./figs/figGibbsConfMat.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 485.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 478.
  [21pdfTeX warning (ext4): destination with the same identifier (name{table.9})
  has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.485 \end{document}
+l.478 \end{document}
                     ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 485.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 478.
  (./report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 485.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 478.
 
 
  *File List*
@@ -810,6 +709,8 @@ listings.sty    2007/02/22 1.4 (Carsten Heinz)
 listings.cfg    2007/02/22 1.4 listings configuration
  nameref.sty    2012/10/27 v2.43 Cross-referencing by name of section
 gettitlestring.sty    2010/12/03 v1.4 Cleanup title references (HO)
+  report.out
+  report.out
 supp-pdf.mkii
 epstopdf-base.sty    2010/02/09 v2.5 Base part for package epstopdf
   grfext.sty    2010/08/19 v1.1 Manage graphics extensions (HO)
@@ -822,28 +723,19 @@ epstopdf-sys.cfg    2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ./figs/figGibbsConfMat.png
  ***********
 
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 485.
-
-Package rerunfilecheck Warning: File `report.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `report.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  5DFE8B29315B952D31BF0AC793FC2B39;1725.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 478.
+Package rerunfilecheck Info: File `report.out' has not changed.
+(rerunfilecheck)             Checksum: 5DFE8B29315B952D31BF0AC793FC2B39;1725.
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 485.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 478.
  ) 
 Here is how much of TeX's memory you used:
- 9461 strings out of 493315
- 136448 string characters out of 6137904
- 268442 words of memory out of 5000000
- 12718 multiletter control sequences out of 15000+600000
+ 9494 strings out of 493315
+ 136915 string characters out of 6137904
+ 269803 words of memory out of 5000000
+ 12745 multiletter control sequences out of 15000+600000
  13703 words of font info for 53 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  30i,10n,35p,1966b,342s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -868,10 +760,10 @@ e/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2
 exmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2013/tex
 mf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/2013/texm
 f-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on report.pdf (21 pages, 620978 bytes).
+Output written on report.pdf (21 pages, 622139 bytes).
 PDF statistics:
- 278 PDF objects out of 1000 (max. 8388607)
- 223 compressed objects within 3 object streams
+ 373 PDF objects out of 1000 (max. 8388607)
+ 317 compressed objects within 4 object streams
  90 named destinations out of 1000 (max. 500000)
- 21 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 221 words of extra memory for PDF output out of 10000 (max. 10000000)
 

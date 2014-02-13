@@ -366,15 +366,9 @@ In order to investigate whether these weights are meaningful and sensible or not
 For Contrastive Divergence, the training setup is the same as mentioned in previous section. The training data is divided into training and validation sets, and early stopping is applied to terminate the training. The initial value for the weight vector entries are chosen randomly from $\mathcal{N}(0,1e-5)$. 
 \subsubsection{Training with Bounded Weights}
 As we saw in Collin's Perceptron, the weight vector entries grow unbounded for tags that are more frequent in the training data. This unbounded growth can cause problems during prediction, because the large weights tend to bias the decision in favor of more frequent tags (e.g. SPACE or PERIOD). One way to deal with this situation is to use a separate learning rate for each entry in the weight vector. Then if a $w_j$ has been updated frequently, we can decrease its learning rate. A  similar approach is to force the $w_j$s to be in a specified range $[-a,a]$. For each update, one then should check that $w_j$ doesn't exceed this bound. We adapt this technique in training of Contrastive Divergence model, with hope that this reduces over-fitting to specific punctuation tags.\\
-<<<<<<< HEAD
-Figure \ref{figCDEarlyStopping} shows that early stopping terminates the training for Contrastive Divergence after two epochs. Tables \ref{tablePredGibbs} and \ref{tableIndividualTagsGibbs} show the performance for this model. These results are very interesting as we compare it row by row to table \ref{tableIndividualTagsPerceptron}. We see that the tag EXCLAMATION\_POINT, QUESTION\_MARK and COLON are learned more and accuracy of their prediction has  increased in Contrastive Divergence compared to Collin's Perceptron. Specifically this is interesting because these are the lowest frequency symbols in the training dataset. However, this learning occurred at the expense of \emph{unlearning} COMMA and PERIOD, which lead to decreased overall prediction accuracy both on sentence level and individual tag level prediction.  As we can see in the confusion matrix in figure \ref{figCDConf}, this model is predicting EXCLAMATION\_POINT for QUESTION\_MARK and PERIOD. This means indicates an inherent limitation in the feature functions reused, that is to use only consecutive POS tags of the input sentence. The model cannot differentiate between these three target tags, as seen in the EXCLAMATION\_POINT columns in figure \ref{figCDConf}. \\
-
-Table \ref{tableGibbsWeights} displays some of the weights learned by Contrastive Divergence. (*****DESC FOR FFs)
-=======
 Figure \ref{figCDEarlyStopping} shows that early stopping terminates the training for Contrastive Divergence after two epochs. Tables \ref{tablePredGibbs} and \ref{tableIndividualTagsGibbs} show the performance for this model. These results are very interesting as we compare it row by row to table \ref{tableIndividualTagsPerceptron}. We see that the tag EXCLAMATION\_POINT, QUESTION\_MARK and COLON are learned more and accuracy of their prediction has  increased in Contrastive Divergence compared to Collin's Perceptron. Specifically this is interesting because these are the lowest frequency symbols in the training dataset. However, this learning occurred at the expense of \emph{unlearning} COMMA and PERIOD, which lead to decreased overall prediction accuracy both on sentence level and individual tag level prediction.  Table \ref{tableGibbsWeights} displays some of the weights learned by Contrastive Divergence. 
 
 As described for Collins perceptron, we could investigate meaningfulness of weights by searching for different patterns of labels and POS tags and their frequency and compare them intuitively with our weights. Intuitively, we could say that the more frequent a pattern is, the more probable it is. But we look over the meaningfulness of large $w_j$s by searching for different patterns and finding repetitive examples. For example for the pattern $\{PRP, EX(Existential there), SPACE, PERIOD\}$ we have the example: "See you there", "We will see you there", or "We look forward to seeing you there".
->>>>>>> 5372da7cc943466cd75e894a7433e9c1591e0ce5
 
 \begin{figure}[H]
 \centering
@@ -481,15 +475,4 @@ We train 6 models for 6 target tags we have in the data. on 4 models, the predic
 
 \section{Conclusion}
 
-<<<<<<< HEAD
 \end{document}
-=======
-\section{Findings and Lessons Learned}
-\subsection{Numerical Issues and Preprocessing}
-\subsection{Overfitting}
-\subsection{Model Selection}
-\subsection{Future works}
-\section{References}
-url = "https://pypi.python.org/pypi/topia.termextract/"
-\end{document}
->>>>>>> 5372da7cc943466cd75e894a7433e9c1591e0ce5
