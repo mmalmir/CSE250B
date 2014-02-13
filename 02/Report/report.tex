@@ -300,7 +300,9 @@ For the first experiment, we train Collin's perceptron with early stopping. Figu
 \end{table}
 
 
-In order to further assess the correctness of the model, we look into the accuracy for predicting individual tags, that is, how much the model is accurate in predicting different punctuation tags. Table \ref{tableIndividualTagsPerceptron} shows the accuracy for predicting individual tags. Figure \ref{figPerceptronConfMat} shows the confusion matrix for the same prediction problem. A quick look at table \ref{tableIndividualTagsPerceptron} and figure \ref{figPerceptronConfMat} reveals some properties of the Collin's Perceptron model. Here, the model has learned only the most frequent punctuation tags in sentences, that is SPACE and PERIOD. For each test sentence the model predicts a simple punctuation tag sequence which has SPACE or PERIOD in most positions (look at SPACE and PERIOD columns in the test confusion matrix in figure \ref{figPerceptronConfMat}). This behavior is somehow natural, because in training phase, the model sees sequences of tags with SPACE or PERIOD more often, and thus the corresponding weights to these weights are more frequently updated. Table \ref{tablePerceptronWeights} shows 5 largest entries in the weight vector and their corresponding feature function (******* DESC FOR FFs).
+In order to further assess the correctness of the model, we look into the accuracy for predicting individual tags, that is, how much the model is accurate in predicting different punctuation tags. Table \ref{tableIndividualTagsPerceptron} shows the accuracy for predicting individual tags. Figure \ref{figPerceptronConfMat} shows the confusion matrix for the same prediction problem. A quick look at table \ref{tableIndividualTagsPerceptron} and figure \ref{figPerceptronConfMat} reveals some properties of the Collin's Perceptron model. Here, the model has learned only the most frequent punctuation tags in sentences, that is SPACE and PERIOD. For each test sentence the model predicts a simple punctuation tag sequence which has SPACE or PERIOD in most positions (look at SPACE and PERIOD columns in the test confusion matrix in figure \ref{figPerceptronConfMat}). This behavior is somehow natural, because in training phase, the model sees sequences of tags with SPACE or PERIOD more often, and thus the corresponding weights to these weights are more frequently updated. Table \ref{tablePerceptronWeights} shows 20 largest entries in the weight vector and their corresponding feature function.
+
+In order to investigate whether these weights are meaningful and sensible or not, we could go through the whole training set and training labels and look over the frequency of their pattern ($y_i,y_{i-1},POS(x_i),POS(x_{i-1})$ where $i$ is from 1 to n) that happens in the context. If the frequency of that pattern is large among the number of  observance from $POS(x_i)$ and $POS(x_{i-1})$, we could conclude that $w_j$ should be large. It is true since if we observe that pattern of POSs, we could say that with high probability their labels are from those labels in pattern. But, we could look over our training labels and the sentence associated with them and check above condition intuitively. For example, for the largest weigh, $\{NN,VB, COMMA, SPACE\}$ we search over the text and find that there are many examples associated with this, for example: "On another note do you have any idea how Patti is holding up" we have the combination of "note" and "do" at first part of sentence that their POS tags are noun (NN) and verb (VB) truly.  Or for example for the combination of $\{NN, PRP, COMMA, SPACE\}$, we have another sentence: "If we have one year of data we can tell which will be cheaper" and at middle part we have the combination of "data" and "we", which are noun (NN) and pronoun (PRP) that its weight is big again. Another example could be for the big weight for the pattern $\{ADJ, PRP, COMMA, SPACE\}$. We have a sentence: "Sorry I didn't attach the form", and at first words we have "Sorry" and "I" which are adjective (ADJ) and pronoun (PRP) consecutively. Another meaningful weigh is the pattern $\{NN, IN, COMMA, SPACE \}$. We have an example: "Thank you for the offer but I am not doing the ride this year". In the middle we have "offer" and "but" which are noun and conjunction the weight according to this pattern is large, and based on grammatical point of view,  we usually have "COMMA" before conjunctions.
 
 \begin{table}[H]\footnotesize
   \caption{Accuracy of predicting different tags by Collin's Perceptron}
@@ -331,29 +333,29 @@ In order to further assess the correctness of the model, we look into the accura
 \begin{table}[H]\footnotesize
   \caption{20 Largest entries of the weight vector  for Collin's Perceptron after learning. For each weight entry, its magnitude and corresponding feature function is listed.}
 \begin{center}
-    \begin{tabular}{| c | c | c | c | c |}
+    \begin{tabular}{| c|c | c | c | c | c |}
     \hline
-    \textbf{ Magnitue} & $X_{i-1}$ & $X_i$ & $Y_{i-1}$& $Y_i$ \\ \hline
-3964.99 & NN & VB & COMMA & SPACE  \\ \hline
-3927.99 & NN & VB & SPACE & SPACE  \\ \hline
-3308.99 & ADJ & NN & SPACE & COMMA  \\ \hline
-2875.99 & IN & NN & SPACE & COMMA  \\ \hline
-2460.99 & PRP & NN & SPACE & COMMA  \\ \hline
-2099.00 & NN & IN  & COMMA & SPACE  \\ \hline
-2067.00 & NN & IN & SPACE & SPACE  \\ \hline
-1800.99 & NN & NN & COMMA & SPACE  \\ \hline
-1771.99 & PRP & VB & SPACE & COMMA  \\ \hline
-1759.00 & NN & NN & SPACE & SPACE  \\ \hline
-1508.99 & NN & WRB & COMMA & SPACE  \\ \hline
-1463.00 & NN & WRB & SPACE & SPACE  \\ \hline
-1451.00 & NN & PRP & COMMA & SPACE  \\ \hline
-1409.00 & NN & PRP & SPACE & SPACE  \\ \hline
-1209.99 & ADJ & PRP & COMMA & SPACE  \\ \hline
-1198.99 & VB & ADJ & SPACE & COMMA  \\ \hline
-1077.00 & ADJ & PRP & SPACE & SPACE  \\ \hline
-1056.00 & NN & ADJ & COMMA & SPACE  \\ \hline
-1018.99 & NN & ADJ & SPACE & SPACE  \\ \hline
-997.000 & IN & PRP & SPACE & COMMA  \\ \hline
+    Number& \textbf{ Magnitue} & $X_{i-1}$ & $X_i$ & $Y_{i-1}$& $Y_i$ \\ \hline
+1 &3964.99 & NN & VB & COMMA & SPACE  \\ \hline
+2 & 3927.99 & NN & VB & SPACE & SPACE  \\ \hline
+3 & 3308.99 & ADJ & NN & SPACE & COMMA  \\ \hline
+4 & 2875.99 & IN & NN & SPACE & COMMA  \\ \hline
+5 & 2460.99 & PRP & NN & SPACE & COMMA  \\ \hline
+6 & 2099.00 & NN & IN  & COMMA & SPACE  \\ \hline
+7 & 2067.00 & NN & IN & SPACE & SPACE  \\ \hline
+8 & 1800.99 & NN & NN & COMMA & SPACE  \\ \hline
+9 & 1771.99 & PRP & VB & SPACE & COMMA  \\ \hline
+10 & 1759.00 & NN & NN & SPACE & SPACE  \\ \hline
+11 & 1508.99 & NN & WRB & COMMA & SPACE  \\ \hline
+12 & 1463.00 & NN & WRB & SPACE & SPACE  \\ \hline
+13 & 1451.00 & NN & PRP & COMMA & SPACE  \\ \hline
+15 & 1409.00 & NN & PRP & SPACE & SPACE  \\ \hline
+16 & 1209.99 & ADJ & PRP & COMMA & SPACE  \\ \hline
+17 & 1198.99 & VB & ADJ & SPACE & COMMA  \\ \hline
+18 & 1077.00 & ADJ & PRP & SPACE & SPACE  \\ \hline
+19 & 1056.00 & NN & ADJ & COMMA & SPACE  \\ \hline
+20 & 1018.99 & NN & ADJ & SPACE & SPACE  \\ \hline
+21 & 997.000 & IN & PRP & SPACE & COMMA  \\ \hline
     \end{tabular}
     \label{tablePerceptronWeights}
 \end{center}
@@ -363,7 +365,9 @@ In order to further assess the correctness of the model, we look into the accura
 For Contrastive Divergence, the training setup is the same as mentioned in previous section. The training data is divided into training and validation sets, and early stopping is applied to terminate the training. The initial value for the weight vector entries are chosen randomly from $\mathcal{N}(0,1e-5)$. 
 \subsubsection{Training with Bounded Weights}
 As we saw in Collin's Perceptron, the weight vector entries grow unbounded for tags that are more frequent in the training data. This unbounded growth can cause problems during prediction, because the large weights tend to bias the decision in favor of more frequent tags (e.g. SPACE or PERIOD). One way to deal with this situation is to use a separate learning rate for each entry in the weight vector. Then if a $w_j$ has been updated frequently, we can decrease its learning rate. A  similar approach is to force the $w_j$s to be in a specified range $[-a,a]$. For each update, one then should check that $w_j$ doesn't exceed this bound. We adapt this technique in training of Contrastive Divergence model, with hope that this reduces over-fitting to specific punctuation tags.\\
-Figure \ref{figCDEarlyStopping} shows that early stopping terminates the training for Contrastive Divergence after two epochs. Tables \ref{tablePredGibbs} and \ref{tableIndividualTagsGibbs} show the performance for this model. These results are very interesting as we compare it row by row to table \ref{tableIndividualTagsPerceptron}. We see that the tag EXCLAMATION\_POINT, QUESTION\_MARK and COLON are learned more and accuracy of their prediction has  increased in Contrastive Divergence compared to Collin's Perceptron. Specifically this is interesting because these are the lowest frequency symbols in the training dataset. However, this learning occurred at the expense of \emph{unlearning} COMMA and PERIOD, which lead to decreased overall prediction accuracy both on sentence level and individual tag level prediction.  Table \ref{tableGibbsWeights} displays some of the weights learned by Contrastive Divergence. (*****DESC FOR FFs)
+Figure \ref{figCDEarlyStopping} shows that early stopping terminates the training for Contrastive Divergence after two epochs. Tables \ref{tablePredGibbs} and \ref{tableIndividualTagsGibbs} show the performance for this model. These results are very interesting as we compare it row by row to table \ref{tableIndividualTagsPerceptron}. We see that the tag EXCLAMATION\_POINT, QUESTION\_MARK and COLON are learned more and accuracy of their prediction has  increased in Contrastive Divergence compared to Collin's Perceptron. Specifically this is interesting because these are the lowest frequency symbols in the training dataset. However, this learning occurred at the expense of \emph{unlearning} COMMA and PERIOD, which lead to decreased overall prediction accuracy both on sentence level and individual tag level prediction.  Table \ref{tableGibbsWeights} displays some of the weights learned by Contrastive Divergence. 
+
+As described for Collins perceptron, we could investigate meaningfulness of weights by searching for different patterns of labels and POS tags and their frequency and compare them intuitively with our weights. Intuitively, we could say that the more frequent a pattern is, the more probable it is. But we look over the meaningfulness of large $w_j$s by searching for different patterns and finding repetitive examples. For example for the pattern $\{PRP, EX(Existential there), SPACE, PERIOD\}$ we have the example: "See you there", "We will see you there", or "We look forward to seeing you there".
 
 \begin{figure}[H]
 \centering
@@ -408,29 +412,29 @@ Figure \ref{figCDEarlyStopping} shows that early stopping terminates the trainin
 \begin{table}[H]\footnotesize
   \caption{20 Largest entries of the weight vector  for Contrastive Divergence after learning.}
 \begin{center}
-    \begin{tabular}{| c | c | c | c | c |}
+    \begin{tabular}{|c| c | c | c | c | c |}
     \hline
-    \textbf{ Magnitue} & $X_{i-1}$ & $X_i$ & $Y_{i-1}$& $Y_i$ \\ \hline
-0.1& WRB& IN &SPACE& SPACE\\ \hline
-0.1& NN &UH &SPACE &COLON\\ \hline
-0.1& NN &UH &SPACE &PERIOD\\ \hline
-0.1 &ADJ &WH &SPACE &SPACE\\ \hline
-0.1 &PRP &ADJ &COMMA& SPACE\\ \hline
-0.1 &PRP &ADJ &SPACE &QUESTION\_MARK\\ \hline
-0.1 &PRP& ADJ &SPACE &SPACE\\ \hline
-0.1 &IN &VB &SPACE &SPACE\\ \hline
-0.1 &VB &IN &SPACE &SPACE\\ \hline
-0.1 &VB &IN &SPACE &PERIOD\\ \hline
-0.1 &VB &IN &SPACE &COMMA\\ \hline
-0.1 &IN &VB &SPACE &QUESTION\_MARK\\ \hline
-0.1 &IN &VB &SPACE &PERIOD\\ \hline
-0.1 &NN &SYM &COMMA& SPACE\\ \hline
-0.1 &CC &CD &SPACE &PERIOD\\ \hline
-0.1 &CC &CD &SPACE &SPACE\\ \hline
-0.1 &PRP &CD& SPACE &PERIOD\\ \hline
-0.1 &PRP &CD &SPACE &QUESTION\_MARK\\ \hline
-0.1 &PRP &EX &SPACE &QUESTION\_MARK\\ \hline
-0.1 &PRP& EX &SPACE &PERIOD\\ \hline
+Number &    \textbf{ Magnitue} & $X_{i-1}$ & $X_i$ & $Y_{i-1}$& $Y_i$ \\ \hline
+1&  0.1& WRB& IN &SPACE& SPACE\\ \hline
+2&  0.1& NN &UH &SPACE &COLON\\ \hline
+3 & 0.1& NN &UH &SPACE &PERIOD\\ \hline
+4 & 0.1 &ADJ &WH &SPACE &SPACE\\ \hline
+5 & 0.1 &PRP &ADJ &COMMA& SPACE\\ \hline
+6 & 0.1 &PRP &ADJ &SPACE &QUESTION\_MARK\\ \hline
+7 & 0.1 &PRP& ADJ &SPACE &SPACE\\ \hline
+8 & 0.1 &IN &VB &SPACE &SPACE\\ \hline
+9 & 0.1 &VB &IN &SPACE &SPACE\\ \hline
+10 & 0.1 &VB &IN &SPACE &PERIOD\\ \hline
+11 & 0.1 &VB &IN &SPACE &COMMA\\ \hline
+12 & 0.1 &IN &VB &SPACE &QUESTION\_MARK\\ \hline
+13 & 0.1 &IN &VB &SPACE &PERIOD\\ \hline
+14 & 0.1 &NN &SYM &COMMA& SPACE\\ \hline
+15 & 0.1 &CC &CD &SPACE &PERIOD\\ \hline
+16 & 0.1 &CC &CD &SPACE &SPACE\\ \hline
+17 & 0.1 &PRP &CD& SPACE &PERIOD\\ \hline
+18 & 0.1 &PRP &CD &SPACE &QUESTION\_MARK\\ \hline
+19 & 0.1 &PRP &EX &SPACE &QUESTION\_MARK\\ \hline
+20 & 0.1 &PRP& EX &SPACE &PERIOD\\ \hline
     \end{tabular}
     \label{tableGibbsWeights}
 \end{center}
