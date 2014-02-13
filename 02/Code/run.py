@@ -12,8 +12,8 @@ print "loading data..."
 
 l = PuncData()
 X_train,y_train,X_test,y_test = l.load()
-n = 100
-ntest = 100
+n = -1
+ntest = -1
 start = 0
 X_train = X_train[start:start+n,:]
 y_train = y_train[start:start+n,:]
@@ -87,7 +87,9 @@ print l.idxToYlabel
 #print cnt,bins
 conf = confMat(y_train,Ypredicted,l.idxToYlabel)
 pprint.pprint(conf)
-plotConfMat(conf)
+labels = [l.idxToYlabel[k] for k in  range(1,7)]
+print labels
+plotConfMat(conf,labels,"trainConfMat.png")
 
 print "################################################"
 print "TRAIN STATS:"

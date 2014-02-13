@@ -6,6 +6,7 @@ import copy
 import pprint
 import numpy as np
 import scipy as sp
+import matplotlib.pyplot as plt
 from transformer import Transformer
 
 
@@ -346,6 +347,15 @@ class CRFClassifier(Transformer):
         lastValidationError = 0.
         cntEq = 0
         numEpochs = 0
+        trainCorrect = []
+        validCorrect = []
+        #untrained prediction accuracy
+        Ypredicted = self.predictLabel(X,W)
+        pCorrect1 = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
+        Ypredicted = self.predictLabel(vX,W)
+        pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
+        trainCorrect.append(pCorrect1)
+        validCorrect.append(pCorrect)
         while not converged:
             #pick next sample
             x                 =  X[sampleCntr,:]
@@ -385,8 +395,8 @@ class CRFClassifier(Transformer):
             if sampleCntr%n==0:
                 numEpochs += 1
                 Ypredicted = self.predictLabel(X,W)
-                pCorrect = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
-                print "training error:",pCorrect
+                pCorrect1 = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
+                print "training error:",pCorrect1
                 
                 Ypredicted = self.predictLabel(vX,W)
                 pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
@@ -398,7 +408,21 @@ class CRFClassifier(Transformer):
                 if  pCorrect<lastValidationError or numEpochs>5 or cntEq>5:
                     converged = True
                     W = Wtemp
+                trainCorrect.append(pCorrect1)
+                validCorrect.append(pCorrect)
                 lastValidationError = pCorrect
+    
+    
+        ax = plt.figure(1).gca()
+        p1, = ax.plot(trainCorrect,"b-x",label="train accuracy")
+        p2, = ax.plot(validCorrect,"r--o",label="validation accuracy")
+        p3, = ax.plot([len(trainCorrect)-2,len(trainCorrect)-2],[0.,1.],"g-.d",label="early stopping")
+        handles, labels = ax.get_legend_handles_labels()
+        plt.xlabel("Epoch")
+        ax.legend(handles[::-1], labels[::-1],loc=3)
+        plt.savefig("Perceptron.png",dpi=160,bbox_inches="tight",format="png")
+
+    
         self.W = W
         self.printW(W,20)
 

@@ -24,18 +24,26 @@ def confMat(Y,yPredicted,idxToLabel):
     for k in confMat.keys():
         for k2 in confMat[k].keys():
             conf[k-1,k2-1] = confMat[k][k2]
+    return conf
+#    return (conf*1000).astype(np.int)
 
-    return (conf*1000).astype(np.int)
 
-
-def plotConfMat(confMat):
+def plotConfMat(confMat,labels,name):
     fig = plt.figure(0)
     ax  = plt.gca()
     res = ax.imshow(confMat, cmap=cm.jet, interpolation='nearest')
-    ax.get_yaxis().set_tick_params(direction='out')
+    ax.get_xaxis().set_tick_params(labeltop     = 'on')
+    ax.get_xaxis().set_tick_params(labelbottom	= 'off')
+    plt.xticks(range(len(labels)),labels,rotation=60)
+    plt.yticks(range(len(labels)),labels)
+#    ax.set_xticklabels(labels,rotation=90)
+#    ax.set_yticklabels(labels)
 #    for i, cas in enumerate(confMat):
 #        for j, c in enumerate(cas):
 #            if c>0:
 #                plt.text(j-.2, i+.2, c, fontsize=14)
     cb = fig.colorbar(res)
-    plt.show()
+    plt.savefig(name,dpi=160,bbox_inches="tight",format="png")
+#    plt.show()
+
+
