@@ -14,9 +14,10 @@
 \BOOKMARK [2][-]{subsection.4.3}{Performance Measure}{section.4}% 14
 \BOOKMARK [1][-]{section.5}{Results of Experiments}{}% 15
 \BOOKMARK [2][-]{subsection.5.1}{Collins perceptron}{section.5}% 16
-\BOOKMARK [2][-]{subsection.5.2}{Gibbs sampling}{section.5}% 17
-\BOOKMARK [1][-]{section.6}{Findings and Lessons Learned}{}% 18
-\BOOKMARK [2][-]{subsection.6.1}{Numerical Issues and Preprocessing}{section.6}% 19
-\BOOKMARK [2][-]{subsection.6.2}{Overfitting}{section.6}% 20
-\BOOKMARK [2][-]{subsection.6.3}{Model Selection}{section.6}% 21
-\BOOKMARK [2][-]{subsection.6.4}{Future works}{section.6}% 22
+\BOOKMARK [2][-]{subsection.5.2}{Contrastive Divergence}{section.5}% 17
+\BOOKMARK [3][-]{subsubsection.5.2.1}{Training with Bounded Weights}{subsection.5.2}% 18
+\BOOKMARK [1][-]{section.6}{Findings and Lessons Learned}{}% 19
+\BOOKMARK [2][-]{subsection.6.1}{Numerical Issues and Preprocessing}{section.6}% 20
+\BOOKMARK [2][-]{subsection.6.2}{Overfitting}{section.6}% 21
+\BOOKMARK [2][-]{subsection.6.3}{Model Selection}{section.6}% 22
+\BOOKMARK [2][-]{subsection.6.4}{Future works}{section.6}% 23
