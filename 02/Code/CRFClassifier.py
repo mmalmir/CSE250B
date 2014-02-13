@@ -285,6 +285,9 @@ class CRFClassifier(Transformer):
                 newX = self.updateX(x,newY)
                 finished = True
             elif method=="guided":
+                idx  = np.arange(l)
+                np.random.shuffle(idx)
+                idx = idx[:n]
                 idxnonSpace = np.where((y!=2) * (y!=4) * (y!=0))[0]
                 if idxnonSpace.shape[0]==0:
                     newY      = self.posterior(x,y,W,idx)
@@ -293,7 +296,10 @@ class CRFClassifier(Transformer):
                 newX = self.updateX(x,newY)
                 finished = True
             elif method=="posterior":
-                newY      = self.posterior(x,y,W,idx)
+                idx  = np.arange(l)
+                np.random.shuffle(idx)
+                idx = idx[:n]
+                newY = self.posterior(x,y,W,idx)
                 newX = self.updateX(x,newY)
                 pNew = W[newX[np.where(newX>0)[0]]].sum()
                 if pNew>pCurrent or cntr>5:
@@ -457,6 +463,15 @@ class CRFClassifier(Transformer):
         lastValidationError = 0.
         cntEq = 0
         numEpochs = 0
+        trainCorrect = []
+        validCorrect = []
+        #untrained prediction accuracy
+        Ypredicted = self.predictLabel(X,W)
+        pCorrect1 = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
+        Ypredicted = self.predictLabel(vX,W)
+        pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
+        trainCorrect.append(pCorrect1)
+        validCorrect.append(pCorrect)
         while not converged:
 #            print "one"
             #pick next sample
@@ -469,16 +484,6 @@ class CRFClassifier(Transformer):
             #calculate Fj(x,y) and Fj(x,yhat)
             F,Fidx            =  self.nonZeroFeatFuncs(x,W)
             Fh,Fhidx          =  self.nonZeroFeatFuncs(xhat,W)
-#            print x
-#            print y
-#            print F
-#            print Fidx
-#            print "\n"
-#            print xhat
-#            print yhat
-#            print Fh
-#            print Fhidx
-#            print "\n"
             idxTotal          =  np.unique(np.concatenate([Fidx,Fhidx]))
             Fnew,FHnew        =  np.zeros(len(idxTotal)),np.zeros(len(idxTotal))
             cnt               =  0
@@ -494,44 +499,50 @@ class CRFClassifier(Transformer):
                     print i2
                 cnt += 1
             #update w
-#            print y
-#            print yhat
-#            print x
-#            print xhat
-#            print Fnew
-#            print FHnew
-#            print "\n"
             Wtemp = copy.deepcopy(W)
             W[idxTotal]     = W[idxTotal] + landa * (Fnew - FHnew) 
 #            Xs = np.arange(numPos**2).astype(np.int)*numLabels**2+16
 #            W[Xs] = 0
-            mn,mx = -0.1,0.1
-            for i in idxTotal:
-                if W[i]>mx:
-                    W[i] = mx
-                elif W[i] < mn:
-                    W[i] = mn
+#            mn,mx = -0.1,0.1
+#            for i in idxTotal:
+#                if W[i]>mx:
+#                    W[i] = mx
+#                elif W[i] < mn:
+#                    W[i] = mn
             #check for convergence
-            if sampleCntr%n==n-1:
-                #                Ypredicted = self.predictLabel(X,W)
-                #                pCorrect   = (Y==Ypredicted).sum()/float(Y.shape[1]*Y.shape[0])
-                #                pCorrect   = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
+            if sampleCntr%n==0:
                 numEpochs += 1
+                Ypredicted = self.predictLabel(X,W)
+                pCorrect1 = (Y[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Y[idxNonZero].shape[0])
+                print "training error:",pCorrect1
+                
                 Ypredicted = self.predictLabel(vX,W)
-                pCorrect   = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
-                print pCorrect
+                pCorrect = (vY[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(vY[idxNonZero].shape[0])
+                print "validation error:",pCorrect
                 if pCorrect==lastValidationError:
                     cntEq += 1
                 else:
                     cntEq = 0
-                if pCorrect<lastValidationError or cntEq>=5 or numEpochs>=5:
-#                if numEpochs>5 or cntEq>5:
+                if  pCorrect<lastValidationError or numEpochs>5 or cntEq>5:
                     converged = True
                     W = Wtemp
+                trainCorrect.append(pCorrect1)
+                validCorrect.append(pCorrect)
                 lastValidationError = pCorrect
         self.W = copy.deepcopy(W)
         self.printW(W,20)
 
+        ax = plt.figure(1).gca()
+        p1, = ax.plot(trainCorrect,"b-x",label="train accuracy")
+        p2, = ax.plot(validCorrect,"r--o",label="validation accuracy")
+        p3, = ax.plot([len(trainCorrect)-2,len(trainCorrect)-2],[0.,1.],"g-.d",label="early stopping")
+        handles, labels = ax.get_legend_handles_labels()
+        plt.xlabel("Epoch")
+        ax.legend(handles[::-1], labels[::-1],loc=3)
+        plt.savefig("CD-"+self.samplingMethod+".png",dpi=160,bbox_inches="tight",format="png")
+
+    
+    
     #print the n largest elements of W
     def printW(self,W,n):
         numLabels     = len(self.idxToLabel.keys())+2

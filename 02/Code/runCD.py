@@ -1,8 +1,10 @@
 import pickle
 import numpy as np
+import pprint
 from PuncData import PuncData
 from PosTagFeats import PosTagFeats
 from CRFClassifier import CRFClassifier
+from confmat import *
 
 ######################
 #### loading data ####
@@ -11,8 +13,8 @@ print "loading data..."
 
 l = PuncData()
 X_train,y_train,X_test,y_test = l.load()
-n = 1000
-ntest = 1000
+n = -1
+ntest = -1
 start = 0
 X_train = X_train[start:start+n,:]
 y_train = y_train[start:start+n,:]
@@ -45,59 +47,75 @@ X_test=ptf.transform(X_test,y_test)
 ############################################################
 ### TRAINING CONSTRASTIVE DIVERGENCE WITH MODEL AVERAGING ##
 ############################################################
-clf = []
-for i in range(1,7):
-    print "training classifier on ",l.idxToYlabel[i]
-    clf.append(CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
-                            x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
-    #                        train_method="CollinPerceptron",
-                            train_method="CD",
-                            sampling="random",
-                            turn = i,
-                            )
-               )
-    clf[-1].fit(X_train,y_train)
-    idxNonZero = np.where(X_train!=0)
+if False:
+    clf = []
+    for i in range(1,7):
+        print "training classifier on ",l.idxToYlabel[i]
+        clf.append(CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
+                                x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
+        #                        train_method="CollinPerceptron",
+                                train_method="CD",
+                                sampling="random",
+                                turn = i,
+                                )
+                   )
+        clf[-1].fit(X_train,y_train)
+        idxNonZero = np.where(X_train!=0)
 
-    Ypredicted = clf[-1].transform(X_train)
-    pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
+        Ypredicted = clf[-1].transform(X_train)
+        pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
 
-    print "################################################"
-    print "TRAIN STATS:"
-    print "################################################"
-    for x in l.idxToYlabel.keys():
-        idx = np.where(y_train==x)
-        pCorrect = (y_train[idx]==Ypredicted[idx]).sum()/float(Ypredicted[idx].shape[0])
-        print "for tag:",l.idxToYlabel[x]," rate is:",pCorrect, " num is:",Ypredicted[idx].shape[0]
-    pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
-    print "train rate:",pCorrect
+        print "################################################"
+        print "TRAIN STATS:"
+        print "################################################"
+        for x in l.idxToYlabel.keys():
+            idx = np.where(y_train==x)
+            pCorrect = (y_train[idx]==Ypredicted[idx]).sum()/float(Ypredicted[idx].shape[0])
+            print "for tag:",l.idxToYlabel[x]," rate is:",pCorrect, " num is:",Ypredicted[idx].shape[0]
+        pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
+        print "train rate:",pCorrect
 
-    print "\n"
-
-
-
-##average weights
-#for i in range(len(clf)):
-#    for j in range(clf[0].W.shape[0]):
-##        clf[0].W[j] = max(clf[0].W[j] , clf[i].W[j])
-##clf[0].W = clf[0].W / len(clf)
+        print "\n"
 
 
-#average weights
-for i in range(len(clf)):
-    clf[i].W =  clf[i].W / clf[i].W.sum()
-    clf[0].W += clf[i].W
-#        clf[0].W[j] = max(clf[0].W[j] , clf[i].W[j])
-#clf[0].W = clf[0].W / len(clf)
+
+    ##average weights
+    #for i in range(len(clf)):
+    #    for j in range(clf[0].W.shape[0]):
+    ##        clf[0].W[j] = max(clf[0].W[j] , clf[i].W[j])
+    ##clf[0].W = clf[0].W / len(clf)
 
 
-clf = clf[0]
+    #average weights
+    for i in range(len(clf)):
+        clf[i].W =  clf[i].W / clf[i].W.sum()
+        clf[0].W += clf[i].W
+    #        clf[0].W[j] = max(clf[0].W[j] , clf[i].W[j])
+    #clf[0].W = clf[0].W / len(clf)
+
+
+    clf = clf[0]
+
+clf= CRFClassifier(idx_to_label = l.idxToYlabel,idx_to_pos=l.idxToPos,
+                         x_ngram_len=x_ngram_len,y_ngram_len=y_ngram_len,
+                         #                        train_method="CollinPerceptron",
+                         train_method="CD",
+                         sampling="posterior",
+                         )
+clf.fit(X_train,y_train)
 
 
 idxNonZero = np.where(X_train!=0)
 
 Ypredicted = clf.transform(X_train)
 pCorrect = (y_train[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[idxNonZero].shape[0])
+
+conf = confMat(y_train,Ypredicted,l.idxToYlabel)
+pprint.pprint(conf)
+labels = [l.idxToYlabel[k] for k in  range(1,7)]
+print labels
+plotConfMat(conf,labels,"CDConfMatTrainPost.png")
+
 
 print "################################################"
 print "TRAIN STATS:"
@@ -134,6 +152,11 @@ pCorrect = (y_test[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[i
 print "test rate:",pCorrect
 
 
+conf = confMat(y_test,Ypredicted,l.idxToYlabel)
+pprint.pprint(conf)
+labels = [l.idxToYlabel[k] for k in  range(1,7)]
+print labels
+plotConfMat(conf,labels,"CDConfMatTestPost.png")
 
 
 

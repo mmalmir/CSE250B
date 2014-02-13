@@ -89,7 +89,7 @@ conf = confMat(y_train,Ypredicted,l.idxToYlabel)
 pprint.pprint(conf)
 labels = [l.idxToYlabel[k] for k in  range(1,7)]
 print labels
-plotConfMat(conf,labels,"trainConfMat.png")
+plotConfMat(conf,labels,"PerceptronConfMatTrain.png")
 
 print "################################################"
 print "TRAIN STATS:"
@@ -126,6 +126,12 @@ pCorrect = (y_test[idxNonZero]==Ypredicted[idxNonZero]).sum()/float(Ypredicted[i
 print "test rate:",pCorrect
 
 
+
+conf = confMat(y_test,Ypredicted,l.idxToYlabel)
+pprint.pprint(conf)
+labels = [l.idxToYlabel[k] for k in  range(1,7)]
+print labels
+plotConfMat(conf,labels,"PerceptronConfMatTest.png")
 
 
 
