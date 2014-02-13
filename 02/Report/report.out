@@ -5,17 +5,21 @@
 \BOOKMARK [2][-]{subsection.3.2}{Feature functions}{section.3}% 5
 \BOOKMARK [3][-]{subsubsection.3.2.1}{Part of Speech tagging}{subsection.3.2}% 6
 \BOOKMARK [2][-]{subsection.3.3}{Conditional random fields}{section.3}% 7
-\BOOKMARK [2][-]{subsection.3.4}{The Collins perceptron}{section.3}% 8
-\BOOKMARK [2][-]{subsection.3.5}{Contrastive divergence}{section.3}% 9
-\BOOKMARK [3][-]{subsubsection.3.5.1}{Gibbs sampling}{subsection.3.5}% 10
-\BOOKMARK [1][-]{section.4}{Design of Experiments}{}% 11
-\BOOKMARK [2][-]{subsection.4.1}{Initialization}{section.4}% 12
-\BOOKMARK [2][-]{subsection.4.2}{Preprocessing}{section.4}% 13
-\BOOKMARK [2][-]{subsection.4.3}{Performance Measure}{section.4}% 14
-\BOOKMARK [1][-]{section.5}{Results of Experiments}{}% 15
-\BOOKMARK [2][-]{subsection.5.1}{Collins perceptron}{section.5}% 16
-\BOOKMARK [2][-]{subsection.5.2}{Contrastive Divergence}{section.5}% 17
-\BOOKMARK [3][-]{subsubsection.5.2.1}{Training with Bounded Weights}{subsection.5.2}% 18
-\BOOKMARK [2][-]{subsection.5.3}{Model Averaging}{section.5}% 19
-\BOOKMARK [2][-]{subsection.5.4}{Comparison Between Different Models}{section.5}% 20
-\BOOKMARK [1][-]{section.6}{Conclusion}{}% 21
+\BOOKMARK [2][-]{subsection.3.4}{ Inference algorithms for linear-chain CRFs}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.5}{Gradients for log-linear models}{section.3}% 9
+\BOOKMARK [2][-]{subsection.3.6}{Stochastic gradient ascent}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.7}{The Collins perceptron}{section.3}% 11
+\BOOKMARK [3][-]{subsubsection.3.7.1}{Gibbs sampling}{subsection.3.7}% 12
+\BOOKMARK [2][-]{subsection.3.8}{Contrastive divergence}{section.3}% 13
+\BOOKMARK [1][-]{section.4}{Design of Experiments}{}% 14
+\BOOKMARK [2][-]{subsection.4.1}{Feature extraction}{section.4}% 15
+\BOOKMARK [2][-]{subsection.4.2}{Initialization}{section.4}% 16
+\BOOKMARK [2][-]{subsection.4.3}{Preprocessing}{section.4}% 17
+\BOOKMARK [2][-]{subsection.4.4}{Performance Measure}{section.4}% 18
+\BOOKMARK [1][-]{section.5}{Results of Experiments}{}% 19
+\BOOKMARK [2][-]{subsection.5.1}{Collins perceptron}{section.5}% 20
+\BOOKMARK [2][-]{subsection.5.2}{Contrastive Divergence}{section.5}% 21
+\BOOKMARK [3][-]{subsubsection.5.2.1}{Training with Bounded Weights}{subsection.5.2}% 22
+\BOOKMARK [2][-]{subsection.5.3}{Model Averaging}{section.5}% 23
+\BOOKMARK [2][-]{subsection.5.4}{Comparison Between Different Models}{section.5}% 24
+\BOOKMARK [1][-]{section.6}{Conclusion}{}% 25
