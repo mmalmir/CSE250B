@@ -478,7 +478,6 @@ In this paper, we reported the details and results of a CRF model for prediction
 We saw that Collin's Perceptron is better if we consider overall prediction rate for individual tags. But it suffers from over fitting to most prevalent punctuation tags. We proposed bounded weights update inside training procedure to avoid this form of over-fitting. We saw that this techniques results in improved prediction accuracy for less frequent punctuation tags. However, it resulted in un-learning the frequent punctuation tags because of the bound. This holds promise though that if a more sophisticated  technique such as individual learning rate for weight entries $w_j$ would result in an improved prediction accuracy while avoiding over-fitting to more frequent tags.\\
 We also proposed the averaged model, which simply averaged the weight vectors of different models tuned to predict different punctuation tags. This model could predict the less frequent tags better that Contrastive Divergence, but because of weight averaging, it looses prediction accuracy. Again, this holds promise that a more sophisticated model averaging technique would result in a better prediction accuracy.
 
-\section{References}
 \begin{thebibliography}{9}
 
 \bibitem{topia}
